@@ -1,0 +1,171 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum OrganizationStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+    ARCHIVED
+}
+
+enum BranchStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+    ARCHIVED
+}
+
+enum DepartmentStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+    ARCHIVED
+}
+
+enum PositionStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+    ARCHIVED
+}
+
+enum EmploymentType {
+    FULL_TIME
+    PART_TIME
+    CONTRACTOR
+    INTERN
+    PROBATION
+}
+
+enum EmployeeStatus {
+    ACTIVE
+    INACTIVE
+    TERMINATED
+    SUSPENDED
+    ON_LEAVE
+}
+
+model Organization {
+    id        String             @id @default(uuid())
+    code      String             @unique
+    name      String
+    taxCode   String?            @unique
+    phone     String?
+    email     String?            @unique
+    // logoMediaId String?
+    website   String?
+    timezone  String             @default("Asia/Ho_Chi_Minh")
+    currency  String             @default("VND")
+    status    OrganizationStatus @default(ACTIVE)
+    createdAt DateTime           @default(now())
+    updatedAt DateTime           @updatedAt
+    deletedAt DateTime?
+    // @@index([createdAt])
+    // @@index([deletedAt])
+
+    branches Branch[]
+
+    @@index([status])
+}
+
+model Branch {
+    id             String       @id @default(uuid())
+    organizationId String
+    code           String
+    name           String
+    phone          String?
+    email          String?
+    taxCode        String?
+    address        String
+    latitude       Decimal?
+    longitude      Decimal?
+    openTime       String?
+    closeTime      String?
+    timezone       String       @default("Asia/Ho_Chi_Minh")
+    status         BranchStatus @default(ACTIVE)
+    createdAt      DateTime     @default(now())
+    updatedAt      DateTime     @updatedAt
+    deletedAt      DateTime?
+
+    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+    departments  Department[]
+    employees    Employee[]
+
+    @@unique([organizationId, code])
+}
+
+model Department {
+    id          String           @id @default(uuid())
+    branchId    String
+    code        String
+    name        String
+    description String?
+    status      DepartmentStatus @default(ACTIVE)
+    createdAt   DateTime         @default(now())
+    updatedAt   DateTime         @updatedAt
+    deletedAt   DateTime?
+
+    branch    Branch     @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    positions Position[]
+    employees Employee[]
+
+    @@unique([branchId, code])
+}
+
+model Position {
+    id           String         @id @default(uuid())
+    departmentId String
+    code         String
+    name         String
+    level        Int
+    description  String?
+    status       PositionStatus @default(ACTIVE)
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    deletedAt    DateTime?
+
+    department Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+    employees  Employee[]
+
+    @@unique([departmentId, code])
+}
+
+model Employee {
+    id              String         @id @default(uuid())
+    branchId        String
+    departmentId    String
+    positionId      String
+    managerId       String?
+    employeeCode    String
+    firstName       String
+    lastName        String
+    fullName        String
+    email           String?        @unique
+    phone           String?        @unique
+    dateOfBirth     DateTime?      @db.Date
+    hireDate        DateTime       @db.Date
+    terminationDate DateTime?      @db.Date
+    employmentType  EmploymentType
+    status          EmployeeStatus @default(ACTIVE)
+    createdAt       DateTime       @default(now())
+    updatedAt       DateTime       @updatedAt
+    deletedAt       DateTime?
+
+    branch       Branch     @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    position     Position   @relation(fields: [positionId], references: [id], onDelete: Restrict)
+    department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+    manager      Employee?  @relation("EmployeeManager", fields: [managerId], references: [id])
+    subordinates Employee[] @relation("EmployeeManager")
+
+    @@unique([branchId, employeeCode])
+    @@index([departmentId])
+    @@index([positionId])
+    @@index([managerId])
+    @@index([status])
+}
