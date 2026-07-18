@@ -81,6 +81,13 @@ enum RolePermissionStatus {
     REVOKED
 }
 
+enum LoginType {
+    PASSWORD
+    GOOGLE
+    FACEBOOK
+    SSO
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -216,12 +223,19 @@ model User {
     updatedAt         DateTime   @updatedAt
     deletedAt         DateTime?
 
-    employee           Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-    userRoles          UserRole[]       @relation("UserRoles")
-    assignedRoles      UserRole[]       @relation("AssignedUserRoles")
-    revokedRoles       UserRole[]       @relation("RevokedUserRoles")
-    assignedPermission RolePermission[] @relation("AssignedRolePermissions")
-    revokedPermission  RolePermission[] @relation("RevokedRolePermissions")
+    employee                      Employee                 @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+    userRoles                     UserRole[]               @relation("UserRoles")
+    assignedRoles                 UserRole[]               @relation("AssignedUserRoles")
+    revokedRoles                  UserRole[]               @relation("RevokedUserRoles")
+    assignedPermission            RolePermission[]         @relation("AssignedRolePermissions")
+    revokedPermission             RolePermission[]         @relation("RevokedRolePermissions")
+    refreshTokens                 RefreshToken[]           @relation("UserRefreshToken")
+    revokeRefreshTokens           RefreshToken[]           @relation("RevokedRefreshTokenUser")
+    loginHistories                LoginHistory[]
+    passwordResetTokens           PasswordResetToken[]
+    revokedPasswordReset          PasswordResetToken[]     @relation("RevokedPasswordResetTokenUser")
+    emailVerificationTokens       EmailVerificationToken[]
+    revokedEmailVerificationToken EmailVerificationToken[] @relation("RevokedEmailVerificationTokens")
 
     @@index([status])
     @@index([lastLoginAt])
@@ -316,4 +330,83 @@ model RolePermission {
     @@index([status])
     @@index([assignedBy])
     @@index([revokedBy])
+}
+
+model RefreshToken {
+    id            String    @id @default(uuid())
+    userId        String
+    tokenHash     String    @unique
+    deviceId      String?
+    deviceName    String?
+    ipAddress     String?
+    userAgent     String?
+    expiresAt     DateTime
+    revokedAt     DateTime?
+    revokedBy     String?
+    revokedReason String?
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+
+    user          User  @relation("UserRefreshToken", fields: [userId], references: [id], onDelete: Restrict)
+    revokedByUser User? @relation("RevokedRefreshTokenUser", fields: [revokedBy], references: [id], onDelete: Restrict)
+
+    @@index([userId])
+    @@index([expiresAt])
+}
+
+model LoginHistory {
+    id           String    @id @default(uuid())
+    userId       String?
+    username     String
+    loginType    LoginType
+    success      Boolean
+    failedReason String?
+    ipAddress    String?
+    userAgent    String?
+    deviceId     String?
+    deviceName   String?
+    createdAt    DateTime  @default(now())
+
+    user User? @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+    @@index([userId])
+    @@index([createdAt])
+    @@index([success])
+}
+
+model PasswordResetToken {
+    id            String    @id @default(uuid())
+    userId        String
+    tokenHash     String    @unique
+    expiresAt     DateTime
+    usedAt        DateTime?
+    revokedAt     DateTime?
+    revokedBy     String?
+    revokedReason String?
+    createdAt     DateTime  @default(now())
+
+    user          User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+    revokedByUser User? @relation("RevokedPasswordResetTokenUser", fields: [revokedBy], references: [id], onDelete: Restrict)
+
+    @@index([userId])
+    @@index([expiresAt])
+}
+
+model EmailVerificationToken {
+    id            String    @id @default(uuid())
+    userId        String
+    email         String
+    tokenHash     String    @unique
+    expiresAt     DateTime
+    usedAt        DateTime?
+    revokedAt     DateTime?
+    revokedBy     String?
+    revokedReason String?
+    createdAt     DateTime  @default(now())
+
+    user          User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+    revokedByUser User? @relation("RevokedEmailVerificationTokens", fields: [revokedBy], references: [id], onDelete: Restrict)
+
+    @@index([userId])
+    @@index([expiresAt])
 }
