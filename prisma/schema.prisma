@@ -51,6 +51,36 @@ enum EmployeeStatus {
     ON_LEAVE
 }
 
+enum UserStatus {
+    ACTIVE
+    LOCKED
+    DISABLED
+    PENDING_ACTIVATION
+}
+
+enum RoleStatus {
+    ACTIVE
+    INACTIVE
+    ARCHIVED
+}
+
+enum PermissionStatus {
+    ACTIVE
+    INACTIVE
+    ARCHIVED
+}
+
+enum UserRoleStatus {
+    ACTIVE
+    EXPIRED
+    REVOKED
+}
+
+enum RolePermissionStatus {
+    ACTIVE
+    REVOKED
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -162,10 +192,128 @@ model Employee {
     department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
     manager      Employee?  @relation("EmployeeManager", fields: [managerId], references: [id])
     subordinates Employee[] @relation("EmployeeManager")
+    user         User?
 
     @@unique([branchId, employeeCode])
     @@index([departmentId])
     @@index([positionId])
     @@index([managerId])
     @@index([status])
+}
+
+model User {
+    id                String     @id @default(uuid())
+    employeeId        String     @unique
+    username          String     @unique
+    email             String     @unique
+    passwordHash      String
+    failedLoginCount  Int        @default(0)
+    lastLoginAt       DateTime?
+    passwordChangedAt DateTime?
+    lockedUntil       DateTime?
+    status            UserStatus @default(PENDING_ACTIVATION)
+    createdAt         DateTime   @default(now())
+    updatedAt         DateTime   @updatedAt
+    deletedAt         DateTime?
+
+    employee           Employee         @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+    userRoles          UserRole[]       @relation("UserRoles")
+    assignedRoles      UserRole[]       @relation("AssignedUserRoles")
+    revokedRoles       UserRole[]       @relation("RevokedUserRoles")
+    assignedPermission RolePermission[] @relation("AssignedRolePermissions")
+    revokedPermission  RolePermission[] @relation("RevokedRolePermissions")
+
+    @@index([status])
+    @@index([lastLoginAt])
+}
+
+model Role {
+    id              String           @id @default(uuid())
+    code            String           @unique
+    name            String
+    description     String?
+    isSystem        Boolean          @default(false)
+    status          RoleStatus       @default(ACTIVE)
+    createdAt       DateTime         @default(now())
+    updatedAt       DateTime         @updatedAt
+    deletedAt       DateTime?
+    userRoles       UserRole[]
+    userPermissions RolePermission[]
+
+    @@index([status])
+}
+
+model Permission {
+    id              String           @id @default(uuid())
+    code            String           @unique
+    permissionGroup String
+    module          String
+    action          String
+    name            String
+    description     String?
+    isSystem        Boolean          @default(false)
+    status          PermissionStatus @default(ACTIVE)
+    createdAt       DateTime         @default(now())
+    updatedAt       DateTime         @updatedAt
+    deletedAt       DateTime?
+    userPermissions RolePermission[]
+
+    @@unique([module, action])
+    @@index([permissionGroup])
+    @@index([status])
+    @@index([module])
+}
+
+model UserRole {
+    id         String         @id @default(uuid())
+    userId     String
+    roleId     String
+    assignedBy String?
+    assignedAt DateTime       @default(now())
+    expiredAt  DateTime?
+    reason     String?
+    status     UserRoleStatus @default(ACTIVE)
+    revokedAt  DateTime?
+    revokedBy  String?
+    createdAt  DateTime       @default(now())
+    updatedAt  DateTime       @updatedAt
+    deletedAt  DateTime?
+
+    user           User  @relation("UserRoles", fields: [userId], references: [id], onDelete: Restrict)
+    role           Role  @relation(fields: [roleId], references: [id], onDelete: Restrict)
+    assignedByUser User? @relation("AssignedUserRoles", fields: [assignedBy], references: [id])
+    revokedByUser  User? @relation("RevokedUserRoles", fields: [revokedBy], references: [id])
+
+    @@index([userId])
+    @@index([roleId])
+    @@index([status])
+    @@index([assignedBy])
+    @@index([revokedBy])
+    @@index([expiredAt])
+}
+
+model RolePermission {
+    id           String               @id @default(uuid())
+    roleId       String
+    permissionId String
+    assignedAt   DateTime             @default(now())
+    assignedBy   String?
+    revokedAt    DateTime?
+    revokedBy    String?
+    reason       String?
+    status       RolePermissionStatus @default(ACTIVE)
+    createdAt    DateTime             @default(now())
+    updatedAt    DateTime             @updatedAt
+    deletedAt    DateTime?
+
+    role           Role       @relation(fields: [roleId], references: [id], onDelete: Restrict)
+    permission     Permission @relation(fields: [permissionId], references: [id], onDelete: Restrict)
+    assignedByUser User?      @relation("AssignedRolePermissions", fields: [assignedBy], references: [id])
+    revokedByUser  User?      @relation("RevokedRolePermissions", fields: [revokedBy], references: [id])
+
+    @@index([roleId])
+    @@index([permissionId])
+    @@index([status])
+    @@index([assignedBy])
+    @@index([revokedBy])
 }
