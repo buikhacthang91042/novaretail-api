@@ -107,6 +107,37 @@ enum AttendanceStatus {
     OFF_DAY
 }
 
+enum LeaveTypeStatus {
+    ACTIVE
+    INACTIVE
+    ARCHIVED
+}
+
+enum LeaveRequestStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    CANCELLED
+}
+
+enum HalfDayType {
+    MORNING
+    AFTERNOON
+}
+
+enum HolidayStatus {
+    ACTIVE
+    INACTIVE
+    ARCHIVED
+}
+
+enum OvertimeRequestStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    CANCELLED
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -153,6 +184,7 @@ model Branch {
     departments  Department[]
     employees    Employee[]
     shifts       Shift[]
+    holidays     Holiday[]
 
     @@unique([organizationId, code])
 }
@@ -223,6 +255,13 @@ model Employee {
     shiftAssignments         ShiftAssignment[] @relation("EmployeeShiftAssignment")
     assignedShiftAssignments ShiftAssignment[] @relation("AssignedByEmployee")
     attendances              Attendance[]
+    leaveBalances            LeaveBalance[]
+    leaveRequests            LeaveRequest[]    @relation("EmployeeRequest")
+    approvedLeaveRequests    LeaveRequest[]    @relation("EmployeeApprove")
+    cancelLeaveRequests      LeaveRequest[]    @relation("CancelledByEmployee")
+    overTimeRequests         OvertimeRequest[] @relation("EmployeeOvertimeRequest")
+    approvedOvertimeRequests OvertimeRequest[] @relation("EmployeeOvertimeApprove")
+    canceledOvertimeRequests OvertimeRequest[] @relation("EmployeeOvertimeCancel")
 
     @@unique([branchId, employeeCode])
     @@index([departmentId])
@@ -505,12 +544,157 @@ model Attendance {
     updatedAt         DateTime         @updatedAt
     deletedAt         DateTime?
 
-    shiftAssignment ShiftAssignment @relation(fields: [shiftAssignmentId], references: [id], onDelete: Restrict)
-    employee       Employee        @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+    shiftAssignment  ShiftAssignment   @relation(fields: [shiftAssignmentId], references: [id], onDelete: Restrict)
+    employee         Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+    overtimeRequests OvertimeRequest[]
 
     @@unique([shiftAssignmentId])
     @@index([workingDate])
     @@index([attendanceStatus])
     @@index([employeeId])
     @@index([employeeId, workingDate])
+}
+
+model LeaveType {
+    id                   String          @id @default(uuid())
+    code                 String          @unique
+    name                 String
+    description          String?
+    defaultDays          Int             @default(0)
+    isPaid               Boolean         @default(true)
+    requireApproval      Boolean         @default(true)
+    allowHalfDay         Boolean         @default(true)
+    allowCarryOver       Boolean         @default(false)
+    maxCarryOverDays     Int             @default(0)
+    carryOverExpiryDay   Int?
+    carryOverExpiryMonth Int?
+    status               LeaveTypeStatus @default(ACTIVE)
+    createdAt            DateTime        @default(now())
+    updatedAt            DateTime        @updatedAt
+    deletedAt            DateTime?
+    leaveBalances        LeaveBalance[]
+    leaveRequests        LeaveRequest[]
+
+    @@index([status])
+}
+
+model LeaveBalance {
+    id            String         @id @default(uuid())
+    employeeId    String
+    leaveTypeId   String
+    year          Int
+    allocatedDays Float          @default(0)
+    carryOverDays Float          @default(0)
+    adjustedDays  Float          @default(0)
+    usedDays      Float          @default(0)
+    remainingDays Float          @default(0)
+    createdAt     DateTime       @default(now())
+    updatedAt     DateTime       @updatedAt
+    deletedAt     DateTime?
+    leaveRequests LeaveRequest[]
+
+    employee  Employee  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+    leaveType LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+    @@unique([employeeId, leaveTypeId, year])
+    @@index([employeeId])
+    @@index([leaveTypeId])
+    @@index([year])
+}
+
+model LeaveRequest {
+    id              String             @id @default(uuid())
+    employeeId      String
+    leaveTypeId     String
+    approverId      String?
+    leaveBalanceId  String
+    fromDate        DateTime           @db.Date
+    toDate          DateTime           @db.Date
+    requestedDays   Float
+    isHalfDay       Boolean            @default(false)
+    halfDayType     HalfDayType?
+    reason          String
+    rejectedReason  String?
+    approvedAt      DateTime?
+    rejectedAt      DateTime?
+    cancelledAt     DateTime?
+    cancelledBy     String?
+    cancelledReason String?
+    status          LeaveRequestStatus @default(PENDING)
+    createdAt       DateTime           @default(now())
+    updatedAt       DateTime           @updatedAt
+    deletedAt       DateTime?
+
+    employee            Employee     @relation("EmployeeRequest", fields: [employeeId], references: [id], onDelete: Restrict)
+    approver            Employee?    @relation("EmployeeApprove", fields: [approverId], references: [id], onDelete: Restrict)
+    cancelledByEmployee Employee?    @relation("CancelledByEmployee", fields: [cancelledBy], references: [id], onDelete: Restrict)
+    leaveType           LeaveType    @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+    leaveBalance        LeaveBalance @relation(fields: [leaveBalanceId], references: [id], onDelete: Restrict)
+
+    @@index([employeeId])
+    @@index([approverId])
+    @@index([leaveTypeId])
+    @@index([status])
+    @@index([fromDate])
+    @@index([toDate])
+}
+
+model Holiday {
+    id          String        @id @default(uuid())
+    branchId    String?
+    code        String
+    name        String
+    description String?
+    fromDate    DateTime      @db.Date
+    toDate      DateTime      @db.Date
+    year        Int
+    isPaid      Boolean       @default(true)
+    status      HolidayStatus @default(ACTIVE)
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    deletedAt   DateTime?
+
+    branch Branch? @relation(fields: [branchId], references: [id], onDelete: Restrict)
+
+    @@unique([branchId, code, year])
+    @@index([status])
+    @@index([fromDate])
+    @@index([toDate])
+    @@index([year])
+    @@index([branchId])
+}
+
+model OvertimeRequest {
+    id                 String                @id @default(uuid())
+    attendanceId       String
+    employeeId         String
+    approverId         String?
+    workingDate        DateTime              @db.Date
+    startTime          DateTime
+    endTime            DateTime
+    requestedMinutes   Int
+    approvedMinutes    Int                   @default(0)
+    overtimeMultiplier Float
+    reason             String
+    approvedAt         DateTime?
+    rejectedAt         DateTime?
+    rejectedReason     String?
+    cancelledAt        DateTime?
+    cancelledBy        String?
+    cancelledReason    String?
+    status             OvertimeRequestStatus @default(PENDING)
+    createdAt          DateTime              @default(now())
+    updatedAt          DateTime              @updatedAt
+    deletedAt          DateTime?
+
+    attendance              Attendance @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
+    employeeOvertimeRequest Employee   @relation("EmployeeOvertimeRequest", fields: [employeeId], references: [id], onDelete: Restrict)
+    approver                Employee?  @relation("EmployeeOvertimeApprove", fields: [approverId], references: [id], onDelete: Restrict)
+    cancelledByEmployee     Employee?  @relation("EmployeeOvertimeCancel", fields: [cancelledBy], references: [id], onDelete: Restrict)
+
+    @@index([employeeId])
+    @@index([approverId])
+    @@index([status])
+    @@index([workingDate])
+    @@index([attendanceId])
 }
