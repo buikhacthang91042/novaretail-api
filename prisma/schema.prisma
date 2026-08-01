@@ -88,6 +88,25 @@ enum LoginType {
     SSO
 }
 
+enum ShiftStatus {
+    ACTIVE
+    INACTIVE
+    ARCHIVED
+}
+
+enum ShiftAssignmentStatus {
+    ACTIVE
+    CANCELLED
+}
+
+enum AttendanceStatus {
+    PRESENT
+    ABSENT
+    ON_LEAVE
+    HOLIDAY
+    OFF_DAY
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -133,6 +152,7 @@ model Branch {
     organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
     departments  Department[]
     employees    Employee[]
+    shifts       Shift[]
 
     @@unique([organizationId, code])
 }
@@ -194,12 +214,15 @@ model Employee {
     updatedAt       DateTime       @updatedAt
     deletedAt       DateTime?
 
-    branch       Branch     @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    position     Position   @relation(fields: [positionId], references: [id], onDelete: Restrict)
-    department   Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
-    manager      Employee?  @relation("EmployeeManager", fields: [managerId], references: [id])
-    subordinates Employee[] @relation("EmployeeManager")
-    user         User?
+    branch                   Branch            @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    position                 Position          @relation(fields: [positionId], references: [id], onDelete: Restrict)
+    department               Department        @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+    manager                  Employee?         @relation("EmployeeManager", fields: [managerId], references: [id])
+    subordinates             Employee[]        @relation("EmployeeManager")
+    user                     User?
+    shiftAssignments         ShiftAssignment[] @relation("EmployeeShiftAssignment")
+    assignedShiftAssignments ShiftAssignment[] @relation("AssignedByEmployee")
+    attendances              Attendance[]
 
     @@unique([branchId, employeeCode])
     @@index([departmentId])
@@ -409,4 +432,85 @@ model EmailVerificationToken {
 
     @@index([userId])
     @@index([expiresAt])
+}
+
+model Shift {
+    id                     String      @id @default(uuid())
+    branchId               String
+    code                   String
+    name                   String
+    startTime              String
+    endTime                String
+    breakMinutes           Int
+    lateGraceMinutes       Int
+    earlyLeaveGraceMinutes Int
+    isCrossDay             Boolean     @default(false)
+    description            String?
+    status                 ShiftStatus @default(ACTIVE)
+    createdAt              DateTime    @default(now())
+    updatedAt              DateTime    @updatedAt
+    deletedAt              DateTime?
+
+    branch           Branch            @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    shiftAssignments ShiftAssignment[]
+
+    @@unique([branchId, code])
+    @@index([status])
+}
+
+model ShiftAssignment {
+    id          String                @id @default(uuid())
+    employeeId  String
+    shiftId     String
+    workingDate DateTime              @db.Date
+    assignedBy  String?
+    note        String?
+    status      ShiftAssignmentStatus @default(ACTIVE)
+    createdAt   DateTime              @default(now())
+    updatedAt   DateTime              @updatedAt
+    deletedAt   DateTime?
+
+    shift              Shift        @relation(fields: [shiftId], references: [id], onDelete: Restrict)
+    employee           Employee     @relation("EmployeeShiftAssignment", fields: [employeeId], references: [id], onDelete: Restrict)
+    assignedByEmployee Employee?    @relation("AssignedByEmployee", fields: [assignedBy], references: [id], onDelete: Restrict)
+    attendances        Attendance[]
+
+    @@unique([employeeId, workingDate, shiftId])
+    @@index([status])
+    @@index([assignedBy])
+    @@index([workingDate])
+}
+
+model Attendance {
+    id                String           @id @default(uuid())
+    shiftAssignmentId String
+    employeeId        String
+    checkInAt         DateTime?
+    checkOutAt        DateTime?
+    checkInMethod     String?
+    checkOutMethod    String?
+    checkInIp         String?
+    checkOutIp        String?
+    checkInLatitude   Decimal?
+    checkInLongitude  Decimal?
+    checkOutLatitude  Decimal?
+    checkOutLongitude Decimal?
+    workedMinutes     Int              @default(0)
+    workingDate       DateTime         @db.Date
+    lateMinutes       Int              @default(0)
+    earlyLeaveMinutes Int              @default(0)
+    overtimeMinutes   Int              @default(0)
+    attendanceStatus  AttendanceStatus @default(PRESENT)
+    createdAt         DateTime         @default(now())
+    updatedAt         DateTime         @updatedAt
+    deletedAt         DateTime?
+
+    shiftAssignment ShiftAssignment @relation(fields: [shiftAssignmentId], references: [id], onDelete: Restrict)
+    employee       Employee        @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+    @@unique([shiftAssignmentId])
+    @@index([workingDate])
+    @@index([attendanceStatus])
+    @@index([employeeId])
+    @@index([employeeId, workingDate])
 }
