@@ -138,6 +138,51 @@ enum OvertimeRequestStatus {
     CANCELLED
 }
 
+enum PayrollPeriodStatus {
+    OPEN
+    LOCKED
+    PAID
+    ARCHIVED
+}
+
+enum PayrollStatus {
+    PENDING
+    CALCULATED
+    APPROVED
+    PAID
+    REVERSED
+    ARCHIVED
+}
+
+enum PayrollItemType {
+    EARNING
+    DEDUCTION
+}
+
+enum PayrollItemSource {
+    SALARY
+    OVERTIME
+    ATTENDANCE
+    LEAVE
+    ALLOWANCE
+    BONUS
+    TAX
+    INSURANCE
+    MANUAL
+}
+
+enum PayrollAdjustmentType {
+    ADDITION
+    DEDUCTION
+}
+
+enum PayrollAdjustmentStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    CANCELLED
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -180,11 +225,12 @@ model Branch {
     updatedAt      DateTime     @updatedAt
     deletedAt      DateTime?
 
-    organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-    departments  Department[]
-    employees    Employee[]
-    shifts       Shift[]
-    holidays     Holiday[]
+    organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+    departments    Department[]
+    employees      Employee[]
+    shifts         Shift[]
+    holidays       Holiday[]
+    payrollPeriods PayrollPeriod[]
 
     @@unique([organizationId, code])
 }
@@ -246,22 +292,27 @@ model Employee {
     updatedAt       DateTime       @updatedAt
     deletedAt       DateTime?
 
-    branch                   Branch            @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    position                 Position          @relation(fields: [positionId], references: [id], onDelete: Restrict)
-    department               Department        @relation(fields: [departmentId], references: [id], onDelete: Restrict)
-    manager                  Employee?         @relation("EmployeeManager", fields: [managerId], references: [id])
-    subordinates             Employee[]        @relation("EmployeeManager")
+    branch                   Branch              @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    position                 Position            @relation(fields: [positionId], references: [id], onDelete: Restrict)
+    department               Department          @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+    manager                  Employee?           @relation("EmployeeManager", fields: [managerId], references: [id])
+    subordinates             Employee[]          @relation("EmployeeManager")
     user                     User?
-    shiftAssignments         ShiftAssignment[] @relation("EmployeeShiftAssignment")
-    assignedShiftAssignments ShiftAssignment[] @relation("AssignedByEmployee")
+    shiftAssignments         ShiftAssignment[]   @relation("EmployeeShiftAssignment")
+    assignedShiftAssignments ShiftAssignment[]   @relation("AssignedByEmployee")
     attendances              Attendance[]
     leaveBalances            LeaveBalance[]
-    leaveRequests            LeaveRequest[]    @relation("EmployeeRequest")
-    approvedLeaveRequests    LeaveRequest[]    @relation("EmployeeApprove")
-    cancelLeaveRequests      LeaveRequest[]    @relation("CancelledByEmployee")
-    overTimeRequests         OvertimeRequest[] @relation("EmployeeOvertimeRequest")
-    approvedOvertimeRequests OvertimeRequest[] @relation("EmployeeOvertimeApprove")
-    canceledOvertimeRequests OvertimeRequest[] @relation("EmployeeOvertimeCancel")
+    leaveRequests            LeaveRequest[]      @relation("EmployeeRequest")
+    approvedLeaveRequests    LeaveRequest[]      @relation("EmployeeApprove")
+    cancelLeaveRequests      LeaveRequest[]      @relation("CancelledByEmployee")
+    overTimeRequests         OvertimeRequest[]   @relation("EmployeeOvertimeRequest")
+    approvedOvertimeRequests OvertimeRequest[]   @relation("EmployeeOvertimeApprove")
+    canceledOvertimeRequests OvertimeRequest[]   @relation("EmployeeOvertimeCancel")
+    lockedPayrollPeriods     PayrollPeriod[]
+    payrolls                 Payroll[]           @relation("EmployeePayroll")
+    approvedPayrolls         Payroll[]           @relation("EmployeeApprovePayroll")
+    payrollAdjustments       PayrollAdjustment[] @relation("EmployeePayrollAdjustment")
+    approved                 PayrollAdjustment[] @relation("EmployeeApprovePayrollAdjustment")
 
     @@unique([branchId, employeeCode])
     @@index([departmentId])
@@ -697,4 +748,108 @@ model OvertimeRequest {
     @@index([status])
     @@index([workingDate])
     @@index([attendanceId])
+}
+
+model PayrollPeriod {
+    id          String              @id @default(uuid())
+    branchId    String
+    code        String
+    name        String
+    year        Int
+    month       Int
+    periodStart DateTime            @db.Date
+    periodEnd   DateTime            @db.Date
+    lockedAt    DateTime?
+    lockedBy    String?
+    paidAt      DateTime?
+    status      PayrollPeriodStatus @default(OPEN)
+    createdAt   DateTime            @default(now())
+    updatedAt   DateTime            @updatedAt
+    deletedAt   DateTime?
+
+    branch           Branch    @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    lockedByEmployee Employee? @relation(fields: [lockedBy], references: [id], onDelete: Restrict)
+    payrolls         Payroll[]
+
+    @@unique([branchId, year, month])
+    @@index([status])
+    @@index([paidAt])
+}
+
+model Payroll {
+    id              String        @id @default(uuid())
+    payrollPeriodId String
+    employeeId      String
+    baseSalary      Decimal
+    totalEarnings   Decimal
+    totalDeductions Decimal
+    grossSalary     Decimal
+    netSalary       Decimal
+    workingDays     Int
+    paidLeaveDays   Int
+    unpaidLeaveDays Int
+    overtimeMinutes Int
+    overtimeAmount  Decimal
+    status          PayrollStatus @default(PENDING)
+    calculatedAt    DateTime?
+    approvedAt      DateTime?
+    approvedBy      String?
+    paidAt          DateTime?
+    createdAt       DateTime      @default(now())
+    updatedAt       DateTime      @updatedAt
+    deletedAt       DateTime?
+
+    payrollPeriod      PayrollPeriod       @relation(fields: [payrollPeriodId], references: [id], onDelete: Restrict)
+    employee           Employee            @relation("EmployeePayroll", fields: [employeeId], references: [id], onDelete: Restrict)
+    approvedByEmployee Employee?           @relation("EmployeeApprovePayroll", fields: [approvedBy], references: [id], onDelete: Restrict)
+    payrollItems       PayrollItem[]
+    payrollAdjustments PayrollAdjustment[]
+
+    @@unique([payrollPeriodId, employeeId])
+    @@index([status])
+    @@index([employeeId])
+}
+
+model PayrollItem {
+    id          String            @id @default(uuid())
+    payrollId   String
+    type        PayrollItemType
+    code        String
+    name        String
+    description String?
+    amount      Decimal
+    quantity    Decimal?
+    unitAmount  Decimal?
+    source      PayrollItemSource
+    reason      String?
+    createdAt   DateTime          @default(now())
+    updatedAt   DateTime          @updatedAt
+    deletedAt   DateTime?
+
+    payroll Payroll @relation(fields: [payrollId], references: [id], onDelete: Restrict)
+
+    @@index([payrollId])
+    @@index([type])
+    @@index([source])
+    @@index([code])
+}
+
+model PayrollAdjustment {
+    id         String                  @id @default(uuid())
+    payrollId  String
+    employeeId String
+    type       PayrollAdjustmentType
+    amount     Decimal
+    reason     String
+    approvedBy String?
+    approvedAt DateTime?
+    status     PayrollAdjustmentStatus @default(PENDING)
+    createdAt  DateTime                @default(now())
+    updatedAt  DateTime                @updatedAt
+    deletedAt  DateTime?
+
+    payroll  Payroll   @relation(fields: [payrollId], references: [id], onDelete: Restrict)
+    employee Employee  @relation("EmployeePayrollAdjustment", fields: [employeeId], references: [id], onDelete: Restrict)
+    approver Employee? @relation("EmployeeApprovePayrollAdjustment", fields: [approvedBy], references: [id], onDelete: Restrict)
+    
 }
