@@ -313,6 +313,8 @@ model Employee {
     approvedPayrolls         Payroll[]           @relation("EmployeeApprovePayroll")
     payrollAdjustments       PayrollAdjustment[] @relation("EmployeePayrollAdjustment")
     approved                 PayrollAdjustment[] @relation("EmployeeApprovePayrollAdjustment")
+    employeeSalaries         EmployeeSalary[]
+    employeeAllowances       EmployeeAllowance[]
 
     @@unique([branchId, employeeCode])
     @@index([departmentId])
@@ -851,5 +853,35 @@ model PayrollAdjustment {
     payroll  Payroll   @relation(fields: [payrollId], references: [id], onDelete: Restrict)
     employee Employee  @relation("EmployeePayrollAdjustment", fields: [employeeId], references: [id], onDelete: Restrict)
     approver Employee? @relation("EmployeeApprovePayrollAdjustment", fields: [approvedBy], references: [id], onDelete: Restrict)
-    
+}
+
+model EmployeeSalary {
+    id            String    @id @default(uuid())
+    employeeId    String
+    baseSalary    Decimal
+    effectiveFrom DateTime
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    deletedAt     DateTime?
+
+    employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+    @@index([employeeId])
+    @@index([effectiveFrom])
+}
+
+model EmployeeAllowance {
+    id            String    @id @default(uuid())
+    employeeId    String
+    code          String
+    amount        Decimal
+    effectiveFrom DateTime
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    deletedAt     DateTime?
+
+    employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+
+    @@index([employeeId, code])
+    @@index([effectiveFrom])
 }
