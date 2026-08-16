@@ -242,6 +242,33 @@ enum AuditAction {
     LOGOUT
 }
 
+enum EmployeeContractType {
+    PROBATION
+    FIXED_TERM
+    INDEFINITE_TERM
+}
+
+enum EmployeeContractStatus {
+    DRAFT
+    ACTIVE
+    TERMINATED
+    EXPIRED
+}
+
+enum EmployeeTerminationType {
+    RESIGNATION
+    TERMINATION
+    CONTRACT_END
+    RETIREMENT
+}
+
+enum EmployeeTerminationStatus {
+    PENDING
+    APPROVED
+    REJECTED
+    CANCELLED
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -351,32 +378,35 @@ model Employee {
     updatedAt       DateTime       @updatedAt
     deletedAt       DateTime?
 
-    branch                    Branch                     @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    position                  Position                   @relation(fields: [positionId], references: [id], onDelete: Restrict)
-    department                Department                 @relation(fields: [departmentId], references: [id], onDelete: Restrict)
-    manager                   Employee?                  @relation("EmployeeManager", fields: [managerId], references: [id])
-    subordinates              Employee[]                 @relation("EmployeeManager")
-    user                      User?
-    shiftAssignments          ShiftAssignment[]          @relation("EmployeeShiftAssignment")
-    assignedShiftAssignments  ShiftAssignment[]          @relation("AssignedByEmployee")
-    attendances               Attendance[]
-    leaveBalances             LeaveBalance[]
-    leaveRequests             LeaveRequest[]             @relation("EmployeeRequest")
-    approvedLeaveRequests     LeaveRequest[]             @relation("EmployeeApprove")
-    cancelLeaveRequests       LeaveRequest[]             @relation("CancelledByEmployee")
-    overTimeRequests          OvertimeRequest[]          @relation("EmployeeOvertimeRequest")
-    approvedOvertimeRequests  OvertimeRequest[]          @relation("EmployeeOvertimeApprove")
-    canceledOvertimeRequests  OvertimeRequest[]          @relation("EmployeeOvertimeCancel")
-    lockedPayrollPeriods      PayrollPeriod[]
-    payrolls                  Payroll[]                  @relation("EmployeePayroll")
-    approvedPayrolls          Payroll[]                  @relation("EmployeeApprovePayroll")
-    payrollAdjustments        PayrollAdjustment[]        @relation("EmployeePayrollAdjustment")
-    approved                  PayrollAdjustment[]        @relation("EmployeeApprovePayrollAdjustment")
-    employeeSalaries          EmployeeSalary[]
-    employeeAllowances        EmployeePayComponent[]
-    employeeBankAccounts      EmployeeBankAccount[]
-    employeeEmergencyContacts EmployeeEmergencyContact[]
-    employeeDocuments         EmployeeDocument[]
+    branch                      Branch                     @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    position                    Position                   @relation(fields: [positionId], references: [id], onDelete: Restrict)
+    department                  Department                 @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+    manager                     Employee?                  @relation("EmployeeManager", fields: [managerId], references: [id])
+    subordinates                Employee[]                 @relation("EmployeeManager")
+    user                        User?
+    shiftAssignments            ShiftAssignment[]          @relation("EmployeeShiftAssignment")
+    assignedShiftAssignments    ShiftAssignment[]          @relation("AssignedByEmployee")
+    attendances                 Attendance[]
+    leaveBalances               LeaveBalance[]
+    leaveRequests               LeaveRequest[]             @relation("EmployeeRequest")
+    approvedLeaveRequests       LeaveRequest[]             @relation("EmployeeApprove")
+    cancelLeaveRequests         LeaveRequest[]             @relation("CancelledByEmployee")
+    overTimeRequests            OvertimeRequest[]          @relation("EmployeeOvertimeRequest")
+    approvedOvertimeRequests    OvertimeRequest[]          @relation("EmployeeOvertimeApprove")
+    canceledOvertimeRequests    OvertimeRequest[]          @relation("EmployeeOvertimeCancel")
+    lockedPayrollPeriods        PayrollPeriod[]
+    payrolls                    Payroll[]                  @relation("EmployeePayroll")
+    approvedPayrolls            Payroll[]                  @relation("EmployeeApprovePayroll")
+    payrollAdjustments          PayrollAdjustment[]        @relation("EmployeePayrollAdjustment")
+    approved                    PayrollAdjustment[]        @relation("EmployeeApprovePayrollAdjustment")
+    employeeSalaries            EmployeeSalary[]
+    employeeAllowances          EmployeePayComponent[]
+    employeeBankAccounts        EmployeeBankAccount[]
+    employeeEmergencyContacts   EmployeeEmergencyContact[]
+    employeeDocuments           EmployeeDocument[]
+    employeeContracts           EmployeeContract[]
+    employeeTerminations        EmployeeTermination[]      @relation("EmployeeTermination")
+    employeeApproveTerminations EmployeeTermination[]      @relation("EmployeeApproveTermination")
 
     @@unique([branchId, employeeCode])
     @@index([departmentId])
@@ -1012,7 +1042,8 @@ model EmployeeDocument {
     updatedAt      DateTime               @updatedAt
     deletedAt      DateTime?
 
-    employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+    employee          Employee           @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+    employeeContracts EmployeeContract[]
 
     @@index([employeeId])
     @@index([documentType])
@@ -1031,6 +1062,47 @@ model AuditLog {
     userAgent  String?
     createdAt  DateTime        @default(now())
 
-    @@index([entityType,entityId])
+    @@index([entityType, entityId])
     @@index([action])
+}
+
+model EmployeeContract {
+    id             String                 @id @default(uuid())
+    employeeId     String
+    contractNumber String?
+    contractType   EmployeeContractType
+    startDate      DateTime
+    endDate        DateTime?
+    status         EmployeeContractStatus @default(DRAFT)
+    baseSalary     Decimal
+    documentId     String?
+    createdAt      DateTime               @default(now())
+    updatedAt      DateTime               @updatedAt
+    deletedAt      DateTime?
+
+    employee Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+    document EmployeeDocument? @relation(fields: [documentId], references: [id], onDelete: Restrict)
+
+    @@unique([employeeId, contractType, startDate, endDate])
+    @@index([status])
+}
+
+model EmployeeTermination {
+    id              String                    @id @default(uuid())
+    employeeId      String
+    terminationDate DateTime
+    reason          String?
+    type            EmployeeTerminationType
+    status          EmployeeTerminationStatus @default(PENDING)
+    note            String?
+    approvedAt      DateTime?
+    approvedBy      String?
+
+    employeeTermination Employee  @relation("EmployeeTermination", fields: [employeeId], references: [id], onDelete: Restrict)
+    employeeApprove     Employee? @relation("EmployeeApproveTermination", fields: [approvedBy], references: [id], onDelete: Restrict)
+
+    @@index([employeeId])
+    @@index([status])
+    @@index([type])
+    @@index([terminationDate])
 }
