@@ -269,6 +269,22 @@ enum EmployeeTerminationStatus {
     CANCELLED
 }
 
+enum BrandStatus {
+    ACTIVE
+    INACTIVE
+}
+
+enum CategoryStatus {
+    ACTIVE
+    INACTIVE
+}
+
+enum ProductStatus {
+    ACTIVE
+    INACTIVE
+    ARCHIVED
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -1105,4 +1121,58 @@ model EmployeeTermination {
     @@index([status])
     @@index([type])
     @@index([terminationDate])
+}
+
+model Brand {
+    id          String      @id @default(uuid())
+    code        String      @unique
+    name        String
+    description String?
+    status      BrandStatus @default(ACTIVE)
+    logoUrl     String?
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    deletedAt   DateTime?
+    products    Product[]
+
+    @@index([status])
+}
+
+model Category {
+    id          String         @id @default(uuid())
+    code        String         @unique
+    name        String
+    parentId    String?
+    description String?
+    status      CategoryStatus @default(ACTIVE)
+    createdAt   DateTime       @default(now())
+    updatedAt   DateTime       @updatedAt
+    deletedAt   DateTime?
+
+    parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+    children Category[] @relation("CategoryHierarchy")
+    products Product[]
+
+    @@index([parentId])
+    @@index([status])
+}
+
+model Product {
+    id          String        @id @default(uuid())
+    brandId     String
+    categoryId  String
+    name        String
+    code        String        @unique
+    description String?
+    status      ProductStatus @default(ACTIVE)
+    createdAt   DateTime      @default(now())
+    updatedAt   DateTime      @updatedAt
+    deletedAt   DateTime?
+
+    brand    Brand    @relation(fields: [brandId], references: [id], onDelete: Restrict)
+    category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+    @@index([brandId])
+    @@index([categoryId])
+    @@index([status])
 }
