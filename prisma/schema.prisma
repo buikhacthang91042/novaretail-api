@@ -354,6 +354,41 @@ enum PurchaseReturnStatus {
     CANCELLED
 }
 
+enum CustomerStatus {
+    ACTIVE
+    INACTIVE
+}
+
+enum SalesOrderStatus {
+    DRAFT
+    CONFIRMED
+    PROCESSING
+    COMPLETED
+    CANCELLED
+}
+
+enum PaymentMethod {
+    CASH
+    BANK_TRANSFER
+    CARD
+    E_WALLET
+}
+
+enum PaymentStatus {
+    PENDING
+    COMPLETED
+    FAILED
+    CANCELLED
+}
+
+enum SalesReturnStatus {
+    DRAFT
+    PENDING
+    APPROVED
+    COMPLETED
+    CANCELLED
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -493,6 +528,9 @@ model Employee {
     employeeContracts           EmployeeContract[]
     employeeTerminations        EmployeeTermination[]      @relation("EmployeeTermination")
     employeeApproveTerminations EmployeeTermination[]      @relation("EmployeeApproveTermination")
+    salesOrders                 SalesOrder[]
+    payments                    Payment[]
+    salesReturns                SalesReturn[]
 
     @@unique([branchId, employeeCode])
     @@index([departmentId])
@@ -1273,6 +1311,7 @@ model ProductVariant {
     stockTransferItems      StockTransferItem[]
     purchaseOrderItems      PurchaseOrderItem[]
     purchaseReturnItems     PurchaseReturnItem[]
+    salesOrderItems         SalesOrderItem[]
 
     @@index([productId])
     @@index([barcode])
@@ -1342,6 +1381,8 @@ model Warehouse {
     purchaseOrders     PurchaseOrder[]
     purchaseReceipts   PurchaseReceipt[]
     purchaseReturns    PurchaseReturn[]
+    salesOrders        SalesOrder[]
+    salesReturns       SalesReturn[]
 
     @@unique([branchId, code])
     @@index([status])
@@ -1568,4 +1609,117 @@ model PurchaseReturnItem {
     variant        ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
     @@unique([purchaseReturnId, variantId])
+}
+
+model Customer {
+    id           String         @id @default(uuid())
+    code         String         @unique
+    name         String
+    phone        String?
+    email        String?
+    address      String?
+    note         String?
+    status       CustomerStatus @default(ACTIVE)
+    createdAt    DateTime       @default(now())
+    updatedAt    DateTime       @updatedAt
+    deletedAt    DateTime?
+    salesOrders  SalesOrder[]
+    salesReturns SalesReturn[]
+
+    @@index([status])
+    @@index([email])
+    @@index([phone])
+}
+
+model SalesOrder {
+    id             String           @id @default(uuid())
+    code           String           @unique
+    customerId     String
+    warehouseId    String
+    status         SalesOrderStatus @default(DRAFT)
+    subTotal       Decimal          @default(0)
+    discountAmount Decimal          @default(0)
+    taxAmount      Decimal          @default(0)
+    totalAmount    Decimal          @default(0)
+    createdBy      String
+    note           String?
+    createdAt      DateTime         @default(now())
+    updatedAt      DateTime         @updatedAt
+    deletedAt      DateTime?
+
+    customer          Customer         @relation(fields: [customerId], references: [id], onDelete: Restrict)
+    warehouse         Warehouse        @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    createdByEmployee Employee         @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+    salesOrderItems   SalesOrderItem[]
+    payments          Payment[]
+    salesReturns      SalesReturn[]
+
+    @@index([status])
+    @@index([customerId])
+    @@index([warehouseId])
+    @@index([createdBy])
+}
+
+model SalesOrderItem {
+    id             String    @id @default(uuid())
+    salesOrderId   String
+    variantId      String
+    quantity       Int
+    unitPrice      Decimal
+    unitCost       Decimal
+    discountAmount Decimal
+    taxAmount      Decimal
+    totalAmount    Decimal
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
+    deletedAt      DateTime?
+
+    salesOrder SalesOrder     @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+    variant    ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+    @@unique([salesOrderId, variantId])
+}
+
+model Payment {
+    id            String        @id @default(uuid())
+    salesOrderId  String
+    amount        Decimal
+    method        PaymentMethod
+    status        PaymentStatus @default(PENDING)
+    paidAt        DateTime?
+    createdBy     String
+    referenceCode String?
+    note          String?
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    deletedAt     DateTime?
+
+    salesOrder        SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+    createdByEmployee Employee   @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+
+    @@index([salesOrderId])
+    @@index([status])
+    @@index([referenceCode])
+}
+
+model SalesReturn {
+    id           String            @id @default(uuid())
+    code         String            @unique
+    salesOrderId String
+    warehouseId  String
+    customerId   String
+    status       SalesReturnStatus @default(DRAFT)
+    returnedAt   DateTime?
+    returnedBy   String?
+    reason       String
+    note         String?
+
+    customer           Customer   @relation(fields: [customerId], references: [id], onDelete: Restrict)
+    salesOrder         SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+    warehouse          Warehouse  @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    returnedByEmployee Employee?  @relation(fields: [returnedBy], references: [id], onDelete: Restrict)
+
+    @@index([salesOrderId])
+    @@index([customerId])
+    @@index([status])
 }
