@@ -340,6 +340,20 @@ enum SupplierStatus {
     INACTIVE
 }
 
+enum PurchaseReceiptStatus {
+    DRAFT
+    RECEIVED
+    CANCELLED
+}
+
+enum PurchaseReturnStatus {
+    DRAFT
+    PENDING
+    APPROVED
+    COMPLETED
+    CANCELLED
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -519,6 +533,8 @@ model User {
     requestStockTransfers         StockTransfer[]          @relation("UserRequest")
     approveStockTransfers         StockTransfer[]          @relation("UserApprove")
     purchaseOrders                PurchaseOrder[]
+    purchaseReceipts              PurchaseReceipt[]
+    purchaseReturns               PurchaseReturn[]
 
     @@index([status])
     @@index([lastLoginAt])
@@ -1256,6 +1272,7 @@ model ProductVariant {
     stocks                  Stock[]
     stockTransferItems      StockTransferItem[]
     purchaseOrderItems      PurchaseOrderItem[]
+    purchaseReturnItems     PurchaseReturnItem[]
 
     @@index([productId])
     @@index([barcode])
@@ -1318,11 +1335,13 @@ model Warehouse {
     updatedAt   DateTime        @updatedAt
     deletedAt   DateTime?
 
-    branch             Branch          @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    branch             Branch            @relation(fields: [branchId], references: [id], onDelete: Restrict)
     stocks             Stock[]
-    transfersFromStock StockTransfer[] @relation("FromWarehouse")
-    transfersToStock   StockTransfer[] @relation("ToWarehouse")
+    transfersFromStock StockTransfer[]   @relation("FromWarehouse")
+    transfersToStock   StockTransfer[]   @relation("ToWarehouse")
     purchaseOrders     PurchaseOrder[]
+    purchaseReceipts   PurchaseReceipt[]
+    purchaseReturns    PurchaseReturn[]
 
     @@unique([branchId, code])
     @@index([status])
@@ -1408,20 +1427,21 @@ model StockTransferItem {
 }
 
 model Supplier {
-    id             String          @id @default(uuid())
-    code           String          @unique
-    name           String
-    status         SupplierStatus  @default(ACTIVE)
-    taxCode        String?         @unique
-    phone          String?
-    email          String?
-    address        String?
-    contactName    String?
-    note           String?
-    createdAt      DateTime        @default(now())
-    updatedAt      DateTime        @updatedAt
-    deletedAt      DateTime?
-    purchaseOrders PurchaseOrder[]
+    id              String           @id @default(uuid())
+    code            String           @unique
+    name            String
+    status          SupplierStatus   @default(ACTIVE)
+    taxCode         String?          @unique
+    phone           String?
+    email           String?
+    address         String?
+    contactName     String?
+    note            String?
+    createdAt       DateTime         @default(now())
+    updatedAt       DateTime         @updatedAt
+    deletedAt       DateTime?
+    purchaseOrders  PurchaseOrder[]
+    purchaseReturns PurchaseReturn[]
 
     @@index([status])
 }
@@ -1445,6 +1465,8 @@ model PurchaseOrder {
     supplier           Supplier            @relation(fields: [supplierId], references: [id], onDelete: Restrict)
     user               User?               @relation(fields: [createdBy], references: [id], onDelete: Restrict)
     purchaseOrderItems PurchaseOrderItem[]
+    purchaseReceipts   PurchaseReceipt[]
+    purchaseReturns    PurchaseReturn[]
 
     @@index([status])
     @@index([orderedAt])
@@ -1461,8 +1483,89 @@ model PurchaseOrderItem {
     unitCost         Decimal
     note             String?
 
-    purchaseOrder PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
-    variant       ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+    purchaseOrder        PurchaseOrder         @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+    variant              ProductVariant        @relation(fields: [variantId], references: [id], onDelete: Restrict)
+    purchaseReceiptItems PurchaseReceiptItem[]
 
     @@unique([purchaseOrderId, variantId])
+}
+
+model PurchaseReceipt {
+    id              String                @id @default(uuid())
+    purchaseOrderId String
+    warehouseId     String
+    status          PurchaseReceiptStatus @default(DRAFT)
+    code            String                @unique
+    receivedAt      DateTime?
+    receivedBy      String?
+    note            String?
+    createdAt       DateTime              @default(now())
+    updatedAt       DateTime              @updatedAt
+    deletedAt       DateTime?
+
+    purchaseOrder        PurchaseOrder         @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+    warehouse            Warehouse             @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    user                 User?                 @relation(fields: [receivedBy], references: [id], onDelete: Restrict)
+    purchaseReceiptItems PurchaseReceiptItem[]
+
+    @@index([purchaseOrderId])
+    @@index([status])
+}
+
+model PurchaseReceiptItem {
+    id                  String  @id @default(uuid())
+    purchaseReceiptId   String
+    purchaseOrderItemId String
+    quantity            Int
+    unitCost            Decimal
+    note                String?
+
+    purchaseReceipt   PurchaseReceipt   @relation(fields: [purchaseReceiptId], references: [id], onDelete: Restrict)
+    purchaseOrderItem PurchaseOrderItem @relation(fields: [purchaseOrderItemId], references: [id], onDelete: Restrict)
+
+    @@unique([purchaseReceiptId, purchaseOrderItemId])
+}
+
+model PurchaseReturn {
+    id              String               @id @default(uuid())
+    code            String               @unique
+    purchaseOrderId String
+    warehouseId     String
+    supplierId      String
+    status          PurchaseReturnStatus @default(DRAFT)
+    returnedAt      DateTime?
+    returnedBy      String?
+    reason          String
+    note            String?
+    createdAt       DateTime             @default(now())
+    updatedAt       DateTime             @updatedAt
+    deletedAt       DateTime?
+
+    purchaseOrder       PurchaseOrder        @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+    warehouse           Warehouse            @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    supplier            Supplier             @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+    user                User?                @relation(fields: [returnedBy], references: [id], onDelete: Restrict)
+    purchaseReturnItems PurchaseReturnItem[]
+
+    @@index([purchaseOrderId])
+    @@index([warehouseId])
+    @@index([supplierId])
+    @@index([status])
+}
+
+model PurchaseReturnItem {
+    id               String    @id @default(uuid())
+    purchaseReturnId String
+    variantId        String
+    quantity         Int
+    unitCost         Decimal
+    note             String?
+    createdAt        DateTime  @default(now())
+    updatedAt        DateTime  @updatedAt
+    deletedAt        DateTime?
+
+    purchaseReturn PurchaseReturn @relation(fields: [purchaseReturnId], references: [id], onDelete: Restrict)
+    variant        ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+    @@unique([purchaseReturnId, variantId])
 }
