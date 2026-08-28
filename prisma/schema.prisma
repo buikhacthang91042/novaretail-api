@@ -327,6 +327,19 @@ enum StockTransferStatus {
     CANCELLED
 }
 
+enum PurchaseOrderStatus {
+    DRAFT
+    ORDERED
+    PARTIALLY_RECEIVED
+    RECEIVED
+    CANCELLED
+}
+
+enum SupplierStatus {
+    ACTIVE
+    INACTIVE
+}
+
 model Organization {
     id        String             @id @default(uuid())
     code      String             @unique
@@ -505,6 +518,7 @@ model User {
     stockMovements                StockMovement[]
     requestStockTransfers         StockTransfer[]          @relation("UserRequest")
     approveStockTransfers         StockTransfer[]          @relation("UserApprove")
+    purchaseOrders                PurchaseOrder[]
 
     @@index([status])
     @@index([lastLoginAt])
@@ -1241,6 +1255,7 @@ model ProductVariant {
     productVarianAttributes ProductVariantAttribute[]
     stocks                  Stock[]
     stockTransferItems      StockTransferItem[]
+    purchaseOrderItems      PurchaseOrderItem[]
 
     @@index([productId])
     @@index([barcode])
@@ -1307,6 +1322,7 @@ model Warehouse {
     stocks             Stock[]
     transfersFromStock StockTransfer[] @relation("FromWarehouse")
     transfersToStock   StockTransfer[] @relation("ToWarehouse")
+    purchaseOrders     PurchaseOrder[]
 
     @@unique([branchId, code])
     @@index([status])
@@ -1389,4 +1405,64 @@ model StockTransferItem {
     variant       ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
     @@unique([stockTransferId, variantId])
+}
+
+model Supplier {
+    id             String          @id @default(uuid())
+    code           String          @unique
+    name           String
+    status         SupplierStatus  @default(ACTIVE)
+    taxCode        String?         @unique
+    phone          String?
+    email          String?
+    address        String?
+    contactName    String?
+    note           String?
+    createdAt      DateTime        @default(now())
+    updatedAt      DateTime        @updatedAt
+    deletedAt      DateTime?
+    purchaseOrders PurchaseOrder[]
+
+    @@index([status])
+}
+
+model PurchaseOrder {
+    id          String              @id @default(uuid())
+    warehouseId String
+    supplierId  String
+    status      PurchaseOrderStatus @default(DRAFT)
+    code        String              @unique
+    orderedAt   DateTime?
+    expectedAt  DateTime?
+    receivedAt  DateTime?
+    createdBy   String
+    note        String?
+    createdAt   DateTime            @default(now())
+    updatedAt   DateTime            @updatedAt
+    deletedAt   DateTime?
+
+    warehouse          Warehouse           @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    supplier           Supplier            @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+    user               User?               @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+    purchaseOrderItems PurchaseOrderItem[]
+
+    @@index([status])
+    @@index([orderedAt])
+    @@index([warehouseId])
+    @@index([supplierId])
+}
+
+model PurchaseOrderItem {
+    id               String  @id @default(uuid())
+    purchaseOrderId  String
+    variantId        String
+    quantity         Int
+    receivedQuantity Int     @default(0)
+    unitCost         Decimal
+    note             String?
+
+    purchaseOrder PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+    variant       ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+    @@unique([purchaseOrderId, variantId])
 }
