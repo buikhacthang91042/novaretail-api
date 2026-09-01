@@ -314,8 +314,11 @@ enum StockMovementType {
 
 enum ReferenceType {
     PURCHASE_ORDER
-    ORDER
+    SALES_ORDER
     TRANSFER
+    ADJUSTMENT
+    PURCHASE_RETURN
+    SALES_RETURN
 }
 
 enum StockTransferStatus {
@@ -387,6 +390,53 @@ enum SalesReturnStatus {
     APPROVED
     COMPLETED
     CANCELLED
+}
+
+enum RefundStatus {
+    PENDING
+    COMPLETED
+    FAILED
+    CANCELLED
+}
+
+enum StockAdjustmentStatus {
+    DRAFT
+    PENDING
+    APPROVED
+    COMPLETED
+    CANCELLED
+}
+
+enum ShipmentMethod {
+    PICKUP
+    DELIVERY
+}
+
+enum ShipmentStatus {
+    PENDING
+    PROCESSING
+    SHIPPED
+    DELIVERED
+    FAILED
+    CANCELLED
+}
+
+enum PromotionType {
+    PERCENTAGE
+    FIXED_AMOUNT
+}
+
+enum PromotionStatus {
+    DRAFT
+    ACTIVE
+    INACTIVE
+    EXPIRED
+    CANCELLED
+}
+
+enum PromotionConditionType {
+    MIN_ORDER_AMOUNT
+    MIN_QUANTITY
 }
 
 model Organization {
@@ -531,6 +581,9 @@ model Employee {
     salesOrders                 SalesOrder[]
     payments                    Payment[]
     salesReturns                SalesReturn[]
+    refunds                     Refund[]
+    stockAdjustments            StockAdjustment[]
+    priceHistories              PriceHistory[]
 
     @@unique([branchId, employeeCode])
     @@index([departmentId])
@@ -1312,6 +1365,10 @@ model ProductVariant {
     purchaseOrderItems      PurchaseOrderItem[]
     purchaseReturnItems     PurchaseReturnItem[]
     salesOrderItems         SalesOrderItem[]
+    stockAdjustmentItems    StockAdjustmentItem[]
+    promotionVariants       PromotionVariant[]
+    priceHistories          PriceHistory[]
+    productSuppliers        ProductSupplier[]
 
     @@index([productId])
     @@index([barcode])
@@ -1363,6 +1420,22 @@ model ProductVariantAttribute {
     @@unique([variantId, attributeId])
 }
 
+model ProductSupplier {
+    id          String    @id @default(uuid())
+    variantId   String
+    supplierId  String
+    supplierSku String?
+    unitCost    Decimal
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    deletedAt   DateTime?
+
+    productVariant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+    supplier       Supplier       @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+
+    @@unique([variantId, supplierId])
+}
+
 model Warehouse {
     id          String          @id @default(uuid())
     branchId    String
@@ -1374,15 +1447,17 @@ model Warehouse {
     updatedAt   DateTime        @updatedAt
     deletedAt   DateTime?
 
-    branch             Branch            @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    stocks             Stock[]
-    transfersFromStock StockTransfer[]   @relation("FromWarehouse")
-    transfersToStock   StockTransfer[]   @relation("ToWarehouse")
-    purchaseOrders     PurchaseOrder[]
-    purchaseReceipts   PurchaseReceipt[]
-    purchaseReturns    PurchaseReturn[]
-    salesOrders        SalesOrder[]
-    salesReturns       SalesReturn[]
+    branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Restrict)
+    stocks              Stock[]
+    transfersFromStock  StockTransfer[]      @relation("FromWarehouse")
+    transfersToStock    StockTransfer[]      @relation("ToWarehouse")
+    purchaseOrders      PurchaseOrder[]
+    purchaseReceipts    PurchaseReceipt[]
+    purchaseReturns     PurchaseReturn[]
+    salesOrders         SalesOrder[]
+    salesReturns        SalesReturn[]
+    stockAdjustments    StockAdjustment[]
+    salesOrderShipments SalesOrderShipment[]
 
     @@unique([branchId, code])
     @@index([status])
@@ -1468,21 +1543,22 @@ model StockTransferItem {
 }
 
 model Supplier {
-    id              String           @id @default(uuid())
-    code            String           @unique
-    name            String
-    status          SupplierStatus   @default(ACTIVE)
-    taxCode         String?          @unique
-    phone           String?
-    email           String?
-    address         String?
-    contactName     String?
-    note            String?
-    createdAt       DateTime         @default(now())
-    updatedAt       DateTime         @updatedAt
-    deletedAt       DateTime?
-    purchaseOrders  PurchaseOrder[]
-    purchaseReturns PurchaseReturn[]
+    id               String            @id @default(uuid())
+    code             String            @unique
+    name             String
+    status           SupplierStatus    @default(ACTIVE)
+    taxCode          String?           @unique
+    phone            String?
+    email            String?
+    address          String?
+    contactName      String?
+    note             String?
+    createdAt        DateTime          @default(now())
+    updatedAt        DateTime          @updatedAt
+    deletedAt        DateTime?
+    purchaseOrders   PurchaseOrder[]
+    purchaseReturns  PurchaseReturn[]
+    productSuppliers ProductSupplier[]
 
     @@index([status])
 }
@@ -1612,19 +1688,20 @@ model PurchaseReturnItem {
 }
 
 model Customer {
-    id           String         @id @default(uuid())
-    code         String         @unique
-    name         String
-    phone        String?
-    email        String?
-    address      String?
-    note         String?
-    status       CustomerStatus @default(ACTIVE)
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
-    deletedAt    DateTime?
-    salesOrders  SalesOrder[]
-    salesReturns SalesReturn[]
+    id                 String              @id @default(uuid())
+    code               String              @unique
+    name               String
+    phone              String?
+    email              String?
+    address            String?
+    note               String?
+    status             CustomerStatus      @default(ACTIVE)
+    createdAt          DateTime            @default(now())
+    updatedAt          DateTime            @updatedAt
+    deletedAt          DateTime?
+    salesOrders        SalesOrder[]
+    salesReturns       SalesReturn[]
+    promotionCustomers PromotionCustomer[]
 
     @@index([status])
     @@index([email])
@@ -1647,12 +1724,14 @@ model SalesOrder {
     updatedAt      DateTime         @updatedAt
     deletedAt      DateTime?
 
-    customer          Customer         @relation(fields: [customerId], references: [id], onDelete: Restrict)
-    warehouse         Warehouse        @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    createdByEmployee Employee         @relation(fields: [createdBy], references: [id], onDelete: Restrict)
-    salesOrderItems   SalesOrderItem[]
-    payments          Payment[]
-    salesReturns      SalesReturn[]
+    customer            Customer             @relation(fields: [customerId], references: [id], onDelete: Restrict)
+    warehouse           Warehouse            @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    createdByEmployee   Employee             @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+    salesOrderItems     SalesOrderItem[]
+    payments            Payment[]
+    salesReturns        SalesReturn[]
+    salesOrderShipments SalesOrderShipment[]
+    promotionUsages     PromotionUsage[]
 
     @@index([status])
     @@index([customerId])
@@ -1674,8 +1753,10 @@ model SalesOrderItem {
     updatedAt      DateTime  @updatedAt
     deletedAt      DateTime?
 
-    salesOrder SalesOrder     @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
-    variant    ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+    salesOrder              SalesOrder               @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+    variant                 ProductVariant           @relation(fields: [variantId], references: [id], onDelete: Restrict)
+    salesReturnItems        SalesReturnItem[]
+    salesOrderShipmentItems SalesOrderShipmentItem[]
 
     @@unique([salesOrderId, variantId])
 }
@@ -1714,12 +1795,243 @@ model SalesReturn {
     reason       String
     note         String?
 
-    customer           Customer   @relation(fields: [customerId], references: [id], onDelete: Restrict)
-    salesOrder         SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
-    warehouse          Warehouse  @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    returnedByEmployee Employee?  @relation(fields: [returnedBy], references: [id], onDelete: Restrict)
+    customer           Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
+    salesOrder         SalesOrder        @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+    warehouse          Warehouse         @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    returnedByEmployee Employee?         @relation(fields: [returnedBy], references: [id], onDelete: Restrict)
+    salesReturnItems   SalesReturnItem[]
+    refunds            Refund[]
 
     @@index([salesOrderId])
+    @@index([warehouseId])
     @@index([customerId])
     @@index([status])
+}
+
+model SalesReturnItem {
+    id               String    @id @default(uuid())
+    salesReturnId    String
+    salesOrderItemId String
+    quantity         Int
+    unitPrice        Decimal
+    unitCost         Decimal
+    note             String?
+    createdAt        DateTime  @default(now())
+    updatedAt        DateTime  @updatedAt
+    deletedAt        DateTime?
+
+    salesReturn    SalesReturn    @relation(fields: [salesReturnId], references: [id], onDelete: Restrict)
+    salesOrderItem SalesOrderItem @relation(fields: [salesOrderItemId], references: [id], onDelete: Restrict)
+
+    @@unique([salesReturnId, salesOrderItemId])
+}
+
+model Refund {
+    id            String        @id @default(uuid())
+    salesReturnId String
+    amount        Decimal
+    method        PaymentMethod
+    status        RefundStatus  @default(PENDING)
+    refundedAt    DateTime?
+    processedBy   String
+    referenceCode String?
+    note          String?
+    createdAt     DateTime      @default(now())
+    updatedAt     DateTime      @updatedAt
+    deletedAt     DateTime?
+
+    salesReturn         SalesReturn @relation(fields: [salesReturnId], references: [id], onDelete: Restrict)
+    processedByEmployee Employee    @relation(fields: [processedBy], references: [id], onDelete: Restrict)
+
+    @@index([salesReturnId])
+    @@index([status])
+    @@index([referenceCode])
+}
+
+model StockAdjustment {
+    id          String                @id @default(uuid())
+    warehouseId String
+    status      StockAdjustmentStatus @default(DRAFT)
+    code        String                @unique
+    adjustedAt  DateTime?
+    adjustedBy  String?
+    reason      String
+    note        String?
+    createdAt   DateTime              @default(now())
+    updatedAt   DateTime              @updatedAt
+    deletedAt   DateTime?
+
+    warehouse            Warehouse             @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    adjustedByEmployee   Employee?             @relation(fields: [adjustedBy], references: [id], onDelete: Restrict)
+    stockAdjustmentItems StockAdjustmentItem[]
+
+    @@index([status])
+    @@index([warehouseId])
+}
+
+model StockAdjustmentItem {
+    id                 String    @id @default(uuid())
+    stockAdjustmentId  String
+    variantId          String
+    systemQuantity     Int
+    actualQuantity     Int
+    adjustmentQuantity Int
+    note               String?
+    createdAt          DateTime  @default(now())
+    updatedAt          DateTime  @updatedAt
+    deletedAt          DateTime?
+
+    stockAdjustment StockAdjustment @relation(fields: [stockAdjustmentId], references: [id], onDelete: Restrict)
+    variant         ProductVariant  @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+    @@unique([stockAdjustmentId, variantId])
+    @@index([variantId])
+}
+
+model SalesOrderShipment {
+    id               String         @id @default(uuid())
+    salesOrderId     String
+    warehouseId      String
+    method           ShipmentMethod
+    status           ShipmentStatus @default(PENDING)
+    recipientName    String
+    recipientPhone   String
+    recipientAddress String
+    shippedAt        DateTime?
+    deliveredAt      DateTime?
+    note             String?
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+    deletedAt        DateTime?
+
+    salesOrder              SalesOrder               @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+    warehouse               Warehouse                @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+    salesOrderShipmentItems SalesOrderShipmentItem[]
+
+    @@index([salesOrderId])
+    @@index([status])
+    @@index([warehouseId])
+}
+
+model SalesOrderShipmentItem {
+    id               String    @id @default(uuid())
+    shipmentId       String
+    salesOrderItemId String
+    quantity         Int
+    createdAt        DateTime  @default(now())
+    updatedAt        DateTime  @updatedAt
+    deletedAt        DateTime?
+
+    shipment       SalesOrderShipment @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+    salesOrderItem SalesOrderItem     @relation(fields: [salesOrderItemId], references: [id], onDelete: Restrict)
+
+    @@unique([shipmentId, salesOrderItemId])
+    @@index([salesOrderItemId])
+}
+
+model Promotion {
+    id                  String               @id @default(uuid())
+    code                String               @unique
+    name                String
+    description         String?
+    type                PromotionType
+    value               Decimal
+    usageLimit          Int?
+    usageCount          Int                  @default(0)
+    startAt             DateTime
+    endAt               DateTime?
+    status              PromotionStatus      @default(DRAFT)
+    note                String?
+    createdAt           DateTime             @default(now())
+    updatedAt           DateTime             @updatedAt
+    deletedAt           DateTime?
+    promotionVariants   PromotionVariant[]
+    promotionUsages     PromotionUsage[]
+    promotionCustomers  PromotionCustomer[]
+    promotionConditions PromotionCondition[]
+
+    @@index([status])
+    @@index([name])
+    @@index([startAt])
+    @@index([endAt])
+}
+
+model PromotionVariant {
+    id          String    @id @default(uuid())
+    promotionId String
+    variantId   String
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    deletedAt   DateTime?
+
+    promotion Promotion      @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+    variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+    @@unique([promotionId, variantId])
+    @@index([variantId])
+}
+
+model PromotionUsage {
+    id             String   @id @default(uuid())
+    promotionId    String
+    salesOrderId   String
+    discountAmount Decimal
+    usedAt         DateTime @default(now())
+
+    promotion  Promotion  @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+    salesOrder SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+
+    @@unique([promotionId, salesOrderId])
+    @@index([usedAt])
+    @@index([salesOrderId])
+}
+
+model PromotionCustomer {
+    id          String    @id @default(uuid())
+    promotionId String
+    customerId  String
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    deletedAt   DateTime?
+
+    promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+    customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+    @@unique([promotionId, customerId])
+    @@index([customerId])
+}
+
+model PromotionCondition {
+    id          String                 @id @default(uuid())
+    promotionId String
+    type        PromotionConditionType
+    value       Decimal
+    createdAt   DateTime               @default(now())
+    updatedAt   DateTime               @updatedAt
+    deletedAt   DateTime?
+
+    promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+
+    @@index([promotionId])
+    @@index([type])
+}
+
+model PriceHistory {
+    id            String    @id @default(uuid())
+    variantId     String
+    costPrice     Decimal
+    sellingPrice  Decimal
+    effectiveFrom DateTime
+    effectiveTo   DateTime?
+    createdBy     String
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    deletedAt     DateTime?
+
+    variant           ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+    createdByEmployee Employee       @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+
+    @@index([variantId])
+    @@index([effectiveFrom])
+    @@index([effectiveTo])
 }
