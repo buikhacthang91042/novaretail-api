@@ -714,6 +714,7 @@ model RolePermission {
     assignedByUser User?      @relation("AssignedRolePermissions", fields: [assignedBy], references: [id])
     revokedByUser  User?      @relation("RevokedRolePermissions", fields: [revokedBy], references: [id])
 
+    @@unique([roleId, permissionId])
     @@index([roleId])
     @@index([permissionId])
     @@index([status])

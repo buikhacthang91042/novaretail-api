@@ -10,6 +10,36 @@ const prisma = new PrismaClient({
   adapter,
 }); // tạo Prisma Client sử dụng connection đó
 
+const permissions = [
+  {
+    code: 'product.read',
+    permissionGroup: 'PRODUCT',
+    module: 'product',
+    action: 'read',
+    name: 'View products',
+    description: 'Allow viewing products',
+    isSystem: true,
+  },
+  {
+    code: 'product.create',
+    permissionGroup: 'PRODUCT',
+    module: 'product',
+    action: 'create',
+    name: 'Create products',
+    description: 'Allow creating products',
+    isSystem: true,
+  },
+  {
+    code: 'product.update',
+    permissionGroup: 'PRODUCT',
+    module: 'product',
+    action: 'update',
+    name: 'Update products',
+    description: 'Allow updating products',
+    isSystem: true,
+  },
+];
+
 async function main() {
   const adminRole = await prisma.role.upsert({
     where: {
@@ -18,12 +48,37 @@ async function main() {
     update: {},
     create: {
       code: 'ADMIN',
-      name: 'Adminstator',
-      description: 'System Adminstrator',
+      name: 'Administrator',
+      description: 'System Administrator',
       isSystem: true,
     },
   });
   console.log('Created Role: ', adminRole.code);
+  for (const permission of permissions) {
+    const result = await prisma.permission.upsert({
+      where: {
+        code: permission.code,
+      },
+      update: {},
+      create: permission,
+    });
+
+    const resultPermission = await prisma.rolePermission.upsert({
+      where: {
+        roleId_permissionId: {
+          roleId: adminRole.id,
+          permissionId: result.id,
+        },
+      },
+      update: {},
+      create: {
+        roleId: adminRole.id,
+        permissionId: result.id,
+      },
+    });
+    console.log('resultPermission: ', resultPermission.id);
+    console.log('Created Permission: ', result.code);
+  }
 }
 
 //disconnect sau khi seed
