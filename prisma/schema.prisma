@@ -687,6 +687,7 @@ model UserRole {
     assignedByUser User? @relation("AssignedUserRoles", fields: [assignedBy], references: [id])
     revokedByUser  User? @relation("RevokedUserRoles", fields: [revokedBy], references: [id])
 
+    
     @@index([userId])
     @@index([roleId])
     @@index([status])
