@@ -91,4 +91,28 @@ export class AuthService {
       accessToken,
     };
   }
+
+  async getMe(userId: string) {
+    if (!userId) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        status: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Unauthorized');
+    }
+
+    return user;
+  }
 }
