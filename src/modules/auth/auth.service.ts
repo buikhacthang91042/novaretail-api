@@ -2,9 +2,13 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async login(loginDto: LoginDto) {
     const { username, password } = loginDto;
@@ -14,12 +18,13 @@ export class AuthService {
         username,
       },
     });
-    let userStatus = user?.status;
+
     if (!user) {
       throw new UnauthorizedException('Invalid username or password');
     }
+    let userStatus = user.status;
 
-    let lockedUntil = user.lockedUntil;
+    const lockedUntil = user.lockedUntil;
     if (userStatus === 'LOCKED') {
       if (lockedUntil && lockedUntil > new Date()) {
         throw new UnauthorizedException('Invalid username or password');
@@ -54,7 +59,7 @@ export class AuthService {
           failedLoginCount,
           ...(isLocked && {
             status: 'LOCKED',
-            lockedUntil: new Date(Date.now() + 1 * 60 * 1000),
+            lockedUntil: new Date(Date.now() + 15 * 60 * 1000),
           }),
         },
       });
@@ -66,14 +71,24 @@ export class AuthService {
       },
       data: {
         failedLoginCount: 0,
-        lastLoginAt: new Date(Date.now()),
+        lastLoginAt: new Date(),
       },
     });
 
-    return {
-      id: user.id,
+    const payload = {
+      sub: user.id,
       username: user.username,
-      email: user.email,
+    };
+
+    const accessToken = await this.jwtService.signAsync(payload);
+
+    return {
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+      },
+      accessToken,
     };
   }
 }
