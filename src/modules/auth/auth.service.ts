@@ -4,8 +4,7 @@ import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { createHash, randomBytes } from 'crypto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { response } from 'express';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -120,22 +119,64 @@ export class AuthService {
         username: true,
         email: true,
         status: true,
+        userRoles: {
+          where: {
+            status: 'ACTIVE',
+            OR: [{ expiredAt: null }, { expiredAt: { gt: new Date() } }],
+            role: {
+              status: 'ACTIVE',
+            },
+          },
+          select: {
+            role: {
+              select: {
+                code: true,
+                userPermissions: {
+                  where: {
+                    status: 'ACTIVE',
+                    permission: {
+                      status: 'ACTIVE',
+                    },
+                  },
+                  select: {
+                    permission: {
+                      select: {
+                        code: true,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
       },
     });
-
     if (!user) {
       throw new UnauthorizedException('Unauthorized');
     }
+    const roles = user.userRoles.map((ur) => ur.role.code);
+    const permissions = [
+      ...new Set(
+        user.userRoles.flatMap((ur) =>
+          ur.role.userPermissions.map((up) => up.permission.code),
+        ),
+      ),
+    ];
 
-    return user;
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      status: user.status,
+      roles,
+      permissions,
+    };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto) {
-    if (!refreshTokenDto.refreshToken)
-      throw new UnauthorizedException('Unauthorized');
-    const hashRefreshToken = createHash('sha256')
-      .update(refreshTokenDto.refreshToken)
-      .digest('hex');
+  async refreshToken(token: string) {
+    if (!token) throw new UnauthorizedException('Unauthorized');
+    const hashRefreshToken = createHash('sha256').update(token).digest('hex');
 
     const existingRefreshToken = await this.prisma.refreshToken.findUnique({
       where: {
@@ -198,11 +239,10 @@ export class AuthService {
     };
   }
 
-  async logOut(refreshTokenDto: RefreshTokenDto) {
-    if (!refreshTokenDto.refreshToken)
-      throw new UnauthorizedException('Unauthorized');
+  async logOut(refreshToken: string) {
+    if (!refreshToken) throw new UnauthorizedException('Unauthorized');
     const hashRefreshToken = createHash('sha256')
-      .update(refreshTokenDto.refreshToken)
+      .update(refreshToken)
       .digest('hex');
     const existingRefreshToken = await this.prisma.refreshToken.findUnique({
       where: {

@@ -1,9 +1,17 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
-import type { Request } from 'express';
+import { type Response, type Request } from 'express';
 import { AuthGuard } from './guards/auth.guard';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { PermissionGuard } from './guards/permission.guard';
 import { Permissions } from './decorators/permission.decorator';
 
@@ -12,8 +20,20 @@ export class AuthController {
   constructor(private readonly authSerivce: AuthService) {}
 
   @Post('login')
-  login(@Body() loignDto: LoginDto) {
-    return this.authSerivce.login(loignDto);
+  async login(
+    @Body() loignDto: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.authSerivce.login(loignDto);
+    const { refreshToken, ...resultData } = result;
+    response.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return resultData;
   }
 
   @Get('profile')
@@ -30,13 +50,41 @@ export class AuthController {
   }
 
   @Post('refresh')
-  refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authSerivce.refreshToken(refreshTokenDto);
+  async refreshToken(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken: unknown = request.cookies['refreshToken'];
+    if (typeof refreshToken !== 'string')
+      throw new UnauthorizedException('Unauthorized');
+    const result = await this.authSerivce.refreshToken(refreshToken);
+    const { refreshToken: newRefreshToken, ...resultData } = result;
+    response.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return resultData;
   }
 
   @Post('logout')
-  logOut(@Body() refreshTokenDto: RefreshTokenDto) {
-    return this.authSerivce.logOut(refreshTokenDto);
+  async logOut(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const refreshToken: unknown = request.cookies['refreshToken'];
+    if (typeof refreshToken !== 'string')
+      throw new UnauthorizedException('Unauthorized');
+    const result = await this.authSerivce.logOut(refreshToken);
+    response.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+    return result;
   }
 
   @Post('logout-all')
