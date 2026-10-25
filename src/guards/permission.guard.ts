@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PERMISSIONS_KEY } from '../decorators/permission.decorator';
+import { PERMISSIONS_KEY } from '../modules/auth/decorators/permission.decorator';
 import { Request } from 'express';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 

@@ -10,8 +10,6 @@ export class PrismaService extends PrismaClient implements OnModuleDestroy {
     const pool = new Pool({
       connectionString: process.env.DATABASE_URL,
     });
-    console.log('Hi', process.env.DATABASE_URL);
-
     const adapter = new PrismaPg(pool);
 
     super({

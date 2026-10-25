@@ -11,8 +11,8 @@ import {
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
 import { type Response, type Request } from 'express';
-import { AuthGuard } from './guards/auth.guard';
-import { PermissionGuard } from './guards/permission.guard';
+import { AuthGuard } from '../../guards/auth.guard';
+import { PermissionGuard } from '../../guards/permission.guard';
 import { Permissions } from './decorators/permission.decorator';
 
 @Controller('auth')
