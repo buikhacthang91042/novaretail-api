@@ -28,6 +28,24 @@ const permissions = [
     description: 'Allow updating products',
     isSystem: true,
   },
+  {
+    code: 'brand.read',
+    permissionGroup: 'BRAND',
+    module: 'brand',
+    action: 'read',
+    name: 'View brands',
+    description: 'Allow viewing brands',
+    isSystem: true,
+  },
+  {
+    code: 'category.read',
+    permissionGroup: 'CATEGORY',
+    module: 'category',
+    action: 'read',
+    name: 'View categories',
+    description: 'Allow viewing categories',
+    isSystem: true,
+  },
 ];
 export async function seedRBAC(prisma: PrismaClient) {
   const adminRole = await prisma.role.upsert({
