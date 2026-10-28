@@ -1,7 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetProductsQueryDto } from './dto/get-products-query.dto';
 import { Prisma } from '@prisma/client';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -109,5 +114,65 @@ export class ProductService {
         pageCount: Math.ceil(total / pageSize),
       },
     };
+  }
+
+  async createProduct(body: CreateProductDto) {
+    try {
+      const existingBrand = await this.prisma.brand.findFirst({
+        where: {
+          id: body.brandId,
+          deletedAt: null,
+          status: 'ACTIVE',
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (!existingBrand) {
+        throw new NotFoundException('Brand is not existed !');
+      }
+      const existingCategory = await this.prisma.category.findFirst({
+        where: {
+          id: body.categoryId,
+          status: 'ACTIVE',
+          deletedAt: null,
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (!existingCategory) {
+        throw new NotFoundException('Category is not existed !');
+      }
+      const existingProduct = await this.prisma.product.findFirst({
+        where: {
+          code: body.code,
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (existingProduct) {
+        throw new ConflictException('Product code is existed !');
+      }
+      const newProduct = await this.prisma.product.create({
+        data: {
+          code: body.code,
+          name: body.name,
+          brandId: body.brandId,
+          categoryId: body.categoryId,
+          description: body.description,
+        },
+      });
+      return { data: newProduct };
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Product code already exists');
+      }
+      throw error;
+    }
   }
 }
