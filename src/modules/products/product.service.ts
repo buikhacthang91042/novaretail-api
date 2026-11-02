@@ -342,4 +342,24 @@ export class ProductService {
       throw error;
     }
   }
+
+  async deleteProduct(id: string) {
+    const result = await this.prisma.product.updateMany({
+      where: {
+        id,
+        deletedAt: null,
+      },
+      data: {
+        status: 'INACTIVE',
+        deletedAt: new Date(),
+      },
+    });
+    if (result.count === 0) {
+      throw new NotFoundException('Product not found');
+    } else {
+      return {
+        message: 'Delete product successfully !',
+      };
+    }
+  }
 }

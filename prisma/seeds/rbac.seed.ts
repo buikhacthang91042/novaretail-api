@@ -29,6 +29,15 @@ const permissions = [
     isSystem: true,
   },
   {
+    code: 'product.delete',
+    permissionGroup: 'PRODUCT',
+    module: 'product',
+    action: 'delete',
+    name: 'Delete products',
+    description: 'Allow deleting products',
+    isSystem: true,
+  },
+  {
     code: 'brand.read',
     permissionGroup: 'BRAND',
     module: 'brand',
