@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -7,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { GetProductsQueryDto } from './dto/get-products-query.dto';
 import { Prisma } from '@prisma/client';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -165,6 +167,171 @@ export class ProductService {
         },
       });
       return { data: newProduct };
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException('Product code already exists');
+      }
+      throw error;
+    }
+  }
+
+  async getDetailProduct(id: string) {
+    const productDetail = await this.prisma.product.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        name: true,
+        code: true,
+        description: true,
+        status: true,
+        brand: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        category: {
+          select: {
+            name: true,
+            id: true,
+          },
+        },
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    if (!productDetail) {
+      throw new NotFoundException('Product not found');
+    }
+    return {
+      data: productDetail,
+    };
+  }
+
+  async updateProduct(id: string, body: UpdateProductDto) {
+    try {
+      const existingProduct = await this.prisma.product.findUnique({
+        where: {
+          id,
+        },
+        select: {
+          id: true,
+          code: true,
+          name: true,
+          brand: {
+            select: {
+              id: true,
+            },
+          },
+          category: {
+            select: {
+              id: true,
+            },
+          },
+          deletedAt: true,
+        },
+      });
+
+      if (!existingProduct) {
+        throw new NotFoundException('Product not found !');
+      }
+
+      if (existingProduct.deletedAt !== null) {
+        throw new NotFoundException('Product has been deleted !');
+      }
+      const [existingProductCode, existingBrands, existingCategory] =
+        await Promise.all([
+          body.code !== undefined
+            ? this.prisma.product.findFirst({
+                where: {
+                  AND: [{ code: body.code }, { id: { not: id } }],
+                },
+                select: {
+                  id: true,
+                  code: true,
+                },
+              })
+            : null,
+          body.brandId
+            ? this.prisma.brand.findFirst({
+                where: {
+                  id: body.brandId,
+                  status: 'ACTIVE',
+                  deletedAt: null,
+                },
+                select: {
+                  id: true,
+                },
+              })
+            : null,
+          body.categoryId
+            ? this.prisma.category.findFirst({
+                where: {
+                  id: body.categoryId,
+                  status: 'ACTIVE',
+                  deletedAt: null,
+                },
+                select: {
+                  id: true,
+                },
+              })
+            : null,
+        ]);
+
+      if (existingProductCode) {
+        throw new ConflictException('Product code is existed !');
+      }
+
+      if (body.brandId && !existingBrands) {
+        throw new BadRequestException('Brand is not existed or inactived !');
+      }
+
+      if (body.categoryId && !existingCategory) {
+        throw new BadRequestException('Category is not existed or inactived !');
+      }
+
+      const fieldChanges = {
+        ...(body.brandId !== undefined &&
+          body.brandId !== existingProduct.brand.id && {
+            brandId: body.brandId,
+          }),
+        ...(body.categoryId !== undefined &&
+          body.categoryId !== existingProduct.category.id && {
+            categoryId: body.categoryId,
+          }),
+        ...(body.code !== undefined &&
+          body.code !== existingProduct.code && {
+            code: body.code,
+          }),
+        ...(body.name !== undefined &&
+          body.name !== existingProduct.name && {
+            name: body.name,
+          }),
+        ...(body.description !== undefined && {
+          description: body.description,
+        }),
+      };
+
+      if (Object.keys(fieldChanges).length === 0) {
+        return {
+          data: await this.getDetailProduct(id).then((res) => res.data),
+        };
+      }
+
+      const updateProduct = await this.prisma.product.update({
+        where: {
+          id,
+        },
+        data: fieldChanges,
+      });
+      return {
+        data: updateProduct,
+      };
     } catch (error: unknown) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&

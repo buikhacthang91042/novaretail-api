@@ -1,10 +1,21 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { GetProductsQueryDto } from './dto/get-products-query.dto';
 import { ProductService } from './product.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { PermissionGuard } from 'src/guards/permission.guard';
 import { Permissions } from '../auth/decorators/permission.decorator';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
 
 @Controller('products')
 export class ProductController {
@@ -22,5 +33,22 @@ export class ProductController {
   @Permissions('product.create')
   async createProduct(@Body() body: CreateProductDto) {
     return this.productService.createProduct(body);
+  }
+
+  @Get(':id')
+  @UseGuards(AuthGuard, PermissionGuard)
+  @Permissions('product.read')
+  async getProductDetail(@Param('id', ParseUUIDPipe) id: string) {
+    return this.productService.getDetailProduct(id);
+  }
+
+  @Patch(':id')
+  @UseGuards(AuthGuard, PermissionGuard)
+  @Permissions('product.update')
+  async updateProduct(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: UpdateProductDto,
+  ) {
+    return this.productService.updateProduct(id, body);
   }
 }
