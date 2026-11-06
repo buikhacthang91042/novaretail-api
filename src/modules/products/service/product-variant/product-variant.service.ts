@@ -67,6 +67,12 @@ export class ProductVariantService {
           sellingPrice: true,
           createdAt: true,
           productVariantAttributes: {
+            where: {
+              deletedAt: null,
+              attribute: {
+                deletedAt: null,
+              },
+            },
             select: {
               attribute: {
                 select: {
@@ -148,6 +154,9 @@ export class ProductVariantService {
           },
         },
         stocks: {
+          where: {
+            deletedAt: null,
+          },
           select: {
             quantity: true,
             warehouse: {
@@ -200,22 +209,25 @@ export class ProductVariantService {
         }
       }
       if (body.attributes) {
-        const listAttributeId: string[] = [];
-        for (const attribute of body.attributes) {
-          if (listAttributeId.includes(attribute.attributeId)) {
-            throw new BadRequestException('Duplicate Attribute In Request');
-          }
-          listAttributeId.push(attribute.attributeId);
-          const existingAttribute =
-            await this.prisma.productAttribute.findUnique({
-              where: {
-                id: attribute.attributeId,
-                deletedAt: null,
-              },
-            });
-          if (!existingAttribute)
-            throw new BadRequestException('Attribute Not Found');
+        const listAttributeId = body.attributes.map(
+          (attribute) => attribute.attributeId,
+        );
+
+        const uniqueAttributeId = new Set(listAttributeId);
+        if (uniqueAttributeId.size !== listAttributeId.length) {
+          throw new BadRequestException('Duplicate Attribute In Request');
         }
+
+        const existingAttribute = await this.prisma.productAttribute.findMany({
+          where: {
+            id: {
+              in: listAttributeId,
+            },
+            deletedAt: null,
+          },
+        });
+        if (existingAttribute.length !== listAttributeId.length)
+          throw new BadRequestException('Attribute Not Found');
       }
       const createdProductVariant = await this.prisma.productVariant.create({
         data: {
@@ -271,7 +283,6 @@ export class ProductVariantService {
                 where: {
                   sku: body.sku,
                   id: { not: id },
-                  deletedAt: null,
                 },
                 select: {
                   id: true,
@@ -282,7 +293,6 @@ export class ProductVariantService {
             ? this.prisma.productVariant.findFirst({
                 where: {
                   id: { not: id },
-                  deletedAt: null,
                   AND: [{ barcode: { not: null } }, { barcode: body.barcode }],
                 },
               })
