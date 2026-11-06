@@ -1,4 +1,9 @@
-import { Prisma, PrismaClient, ProductVariantStatus } from '@prisma/client';
+import {
+  Prisma,
+  PrismaClient,
+  ProductAttributeType,
+  ProductVariantStatus,
+} from '@prisma/client';
 
 const brandData = [
   {
@@ -22,6 +27,24 @@ const categoryData = [
     code: 'TABLET',
     name: 'Máy tính bảng',
     description: 'Top 1 Android',
+  },
+];
+
+const attributeData = [
+  {
+    code: 'COLOR',
+    name: 'Màu sắc',
+    type: 'SELECT' as ProductAttributeType,
+  },
+  {
+    code: 'STORAGE',
+    name: 'Dung lượng',
+    type: 'SELECT' as ProductAttributeType,
+  },
+  {
+    code: 'WEIGHT',
+    name: 'Trọng lượng (gram)',
+    type: 'NUMBER' as ProductAttributeType,
   },
 ];
 
@@ -118,37 +141,76 @@ const productImage = [
 ];
 
 export async function seedProducts(prisma: PrismaClient) {
+  const organization = await prisma.organization.findUnique({
+    where: {
+      code: 'NOVA',
+    },
+  });
+
+  if (!organization) {
+    throw new Error('Organization NOVA not found');
+  }
   const brands: Prisma.BrandGetPayload<object>[] = [];
   for (const b of brandData) {
     const brand = await prisma.brand.upsert({
       where: {
-        code: b.code,
+        code_organizationId: {
+          code: b.code,
+          organizationId: organization.id,
+        },
       },
       update: {},
       create: {
         code: b.code,
         name: b.name,
         description: b.description,
+        organizationId: organization.id,
       },
     });
     brands.push(brand);
   }
 
   const categories: Prisma.CategoryGetPayload<object>[] = [];
+
   for (const c of categoryData) {
     const category = await prisma.category.upsert({
       where: {
-        code: c.code,
+        organizationId_code: {
+          organizationId: organization.id,
+          code: c.code,
+        },
       },
       update: {},
       create: {
         code: c.code,
         name: c.name,
         description: c.description,
+        organizationId: organization.id,
       },
     });
+
     categories.push(category);
   }
+  for (const a of attributeData) {
+    const attribute = await prisma.productAttribute.upsert({
+      where: {
+        organizationId_code: {
+          organizationId: organization.id,
+          code: a.code,
+        },
+      },
+      update: {},
+      create: {
+        code: a.code,
+        name: a.name,
+        type: a.type,
+        organizationId: organization.id,
+      },
+    });
+
+    console.log('Seed Product Attribute', attribute.code, attribute.id);
+  }
+
   const products: Prisma.ProductGetPayload<object>[] = [];
   for (const p of productsData) {
     const category = categories.find(
@@ -164,7 +226,10 @@ export async function seedProducts(prisma: PrismaClient) {
     }
     const product = await prisma.product.upsert({
       where: {
-        code: p.code,
+        organizationId_code: {
+          organizationId: organization.id,
+          code: p.code,
+        },
       },
       update: {},
       create: {
@@ -172,6 +237,7 @@ export async function seedProducts(prisma: PrismaClient) {
         name: p.name,
         categoryId: category.id,
         brandId: brand.id,
+        organizationId: organization.id,
       },
     });
     products.push(product);

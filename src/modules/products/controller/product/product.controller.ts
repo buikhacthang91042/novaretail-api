@@ -10,13 +10,13 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { GetProductsQueryDto } from './dto/get-products-query.dto';
-import { ProductService } from './product.service';
+import { GetProductsQueryDto } from '../../dto/product/get-products-query.dto';
+import { ProductService } from '../../service/product/product.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { PermissionGuard } from 'src/guards/permission.guard';
-import { Permissions } from '../auth/decorators/permission.decorator';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { Permissions } from '../../../auth/decorators/permission.decorator';
+import { CreateProductDto } from '../../dto/product/create-product.dto';
+import { UpdateProductDto } from '../../dto/product/update-product.dto';
 
 @Controller('products')
 export class ProductController {

@@ -4,11 +4,11 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { GetProductsQueryDto } from './dto/get-products-query.dto';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { GetProductsQueryDto } from '../../dto/product/get-products-query.dto';
 import { Prisma } from '@prisma/client';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { CreateProductDto } from '../../dto/product/create-product.dto';
+import { UpdateProductDto } from '../../dto/product/update-product.dto';
 
 @Injectable()
 export class ProductService {
@@ -164,6 +164,7 @@ export class ProductService {
           brandId: body.brandId,
           categoryId: body.categoryId,
           description: body.description,
+          organizationId: '',
         },
       });
       return { data: newProduct };

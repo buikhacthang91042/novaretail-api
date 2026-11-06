@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module';
-import { ProductController } from './product.controller';
-import { ProductService } from './product.service';
+import { ProductController } from './controller/product/product.controller';
+import { ProductService } from './service/product/product.service';
 import { JwtModule } from '@nestjs/jwt';
+import { ProductVariantController } from './controller/product-variant/product-variant-controller';
+import { ProductVariantService } from './service/product-variant/product-variant.service';
 
 @Module({
   imports: [
@@ -14,7 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
       },
     }),
   ],
-  controllers: [ProductController],
-  providers: [ProductService],
+  controllers: [ProductController, ProductVariantController],
+  providers: [ProductService, ProductVariantService],
 })
 export class ProductModule {}

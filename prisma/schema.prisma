@@ -1,2038 +1,2067 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
 }
 
 enum OrganizationStatus {
-    ACTIVE
-    INACTIVE
-    SUSPENDED
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
 }
 
 enum BranchStatus {
-    ACTIVE
-    INACTIVE
-    SUSPENDED
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
 }
 
 enum DepartmentStatus {
-    ACTIVE
-    INACTIVE
-    SUSPENDED
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
 }
 
 enum PositionStatus {
-    ACTIVE
-    INACTIVE
-    SUSPENDED
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ARCHIVED
 }
 
 enum EmploymentType {
-    FULL_TIME
-    PART_TIME
-    CONTRACTOR
-    INTERN
-    PROBATION
+  FULL_TIME
+  PART_TIME
+  CONTRACTOR
+  INTERN
+  PROBATION
 }
 
 enum EmployeeStatus {
-    ACTIVE
-    INACTIVE
-    TERMINATED
-    SUSPENDED
-    ON_LEAVE
+  ACTIVE
+  INACTIVE
+  TERMINATED
+  SUSPENDED
+  ON_LEAVE
 }
 
 enum UserStatus {
-    ACTIVE
-    LOCKED
-    DISABLED
-    PENDING_ACTIVATION
+  ACTIVE
+  LOCKED
+  DISABLED
+  PENDING_ACTIVATION
 }
 
 enum RoleStatus {
-    ACTIVE
-    INACTIVE
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  ARCHIVED
 }
 
 enum PermissionStatus {
-    ACTIVE
-    INACTIVE
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  ARCHIVED
 }
 
 enum UserRoleStatus {
-    ACTIVE
-    EXPIRED
-    REVOKED
+  ACTIVE
+  EXPIRED
+  REVOKED
 }
 
 enum RolePermissionStatus {
-    ACTIVE
-    REVOKED
+  ACTIVE
+  REVOKED
 }
 
 enum LoginType {
-    PASSWORD
-    GOOGLE
-    FACEBOOK
-    SSO
+  PASSWORD
+  GOOGLE
+  FACEBOOK
+  SSO
 }
 
 enum ShiftStatus {
-    ACTIVE
-    INACTIVE
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  ARCHIVED
 }
 
 enum ShiftAssignmentStatus {
-    ACTIVE
-    CANCELLED
+  ACTIVE
+  CANCELLED
 }
 
 enum AttendanceStatus {
-    PRESENT
-    ABSENT
-    ON_LEAVE
-    HOLIDAY
-    OFF_DAY
+  PRESENT
+  ABSENT
+  ON_LEAVE
+  HOLIDAY
+  OFF_DAY
 }
 
 enum LeaveTypeStatus {
-    ACTIVE
-    INACTIVE
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  ARCHIVED
 }
 
 enum LeaveRequestStatus {
-    PENDING
-    APPROVED
-    REJECTED
-    CANCELLED
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
 }
 
 enum HalfDayType {
-    MORNING
-    AFTERNOON
+  MORNING
+  AFTERNOON
 }
 
 enum HolidayStatus {
-    ACTIVE
-    INACTIVE
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  ARCHIVED
 }
 
 enum OvertimeRequestStatus {
-    PENDING
-    APPROVED
-    REJECTED
-    CANCELLED
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
 }
 
 enum PayrollPeriodStatus {
-    OPEN
-    LOCKED
-    PAID
-    ARCHIVED
+  OPEN
+  LOCKED
+  PAID
+  ARCHIVED
 }
 
 enum PayrollStatus {
-    PENDING
-    CALCULATED
-    APPROVED
-    PAID
-    REVERSED
-    ARCHIVED
+  PENDING
+  CALCULATED
+  APPROVED
+  PAID
+  REVERSED
+  ARCHIVED
 }
 
 enum PayrollItemType {
-    EARNING
-    DEDUCTION
+  EARNING
+  DEDUCTION
 }
 
 enum PayrollItemSource {
-    SALARY
-    OVERTIME
-    ATTENDANCE
-    LEAVE
-    ALLOWANCE
-    BONUS
-    TAX
-    INSURANCE
-    MANUAL
+  SALARY
+  OVERTIME
+  ATTENDANCE
+  LEAVE
+  ALLOWANCE
+  BONUS
+  TAX
+  INSURANCE
+  MANUAL
 }
 
 enum PayrollAdjustmentType {
-    ADDITION
-    DEDUCTION
+  ADDITION
+  DEDUCTION
 }
 
 enum PayrollAdjustmentStatus {
-    PENDING
-    APPROVED
-    REJECTED
-    CANCELLED
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
 }
 
 enum EmployeePayComponentType {
-    ALLOWANCE
-    DEDUCTION
+  ALLOWANCE
+  DEDUCTION
 }
 
 enum EmployeeDocumentStatus {
-    ACTIVE
-    INACTIVE
-    EXPIRED
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  ARCHIVED
 }
 
 enum EmployeeDocumentType {
-    ID_CARD
-    CONTRACT
-    CERTIFICATE
-    OTHER
+  ID_CARD
+  CONTRACT
+  CERTIFICATE
+  OTHER
 }
 
 enum AuditEntityType {
-    ORGANIZATION
-    BRANCH
-    DEPARTMENT
-    POSITION
-    EMPLOYEE
-    USER
-    ROLE
-    PERMISSION
-    SHIFT
-    SHIFT_ASSIGNMENT
-    ATTENDANCE
-    LEAVE_TYPE
-    LEAVE_REQUEST
-    HOLIDAY
-    OVERTIME_REQUEST
-    PAYROLL_PERIOD
-    PAYROLL
-    PAYROLL_ITEM
-    PAYROLL_ADJUSTMENT
-    EMPLOYEE_SALARY
-    EMPLOYEE_PAY_COMPONENT
-    EMPLOYEE_BANK_ACCOUNT
-    EMPLOYEE_EMERGENCY_CONTACT
-    EMPLOYEE_DOCUMENT
+  ORGANIZATION
+  BRANCH
+  DEPARTMENT
+  POSITION
+  EMPLOYEE
+  USER
+  ROLE
+  PERMISSION
+  SHIFT
+  SHIFT_ASSIGNMENT
+  ATTENDANCE
+  LEAVE_TYPE
+  LEAVE_REQUEST
+  HOLIDAY
+  OVERTIME_REQUEST
+  PAYROLL_PERIOD
+  PAYROLL
+  PAYROLL_ITEM
+  PAYROLL_ADJUSTMENT
+  EMPLOYEE_SALARY
+  EMPLOYEE_PAY_COMPONENT
+  EMPLOYEE_BANK_ACCOUNT
+  EMPLOYEE_EMERGENCY_CONTACT
+  EMPLOYEE_DOCUMENT
 }
 
 enum AuditAction {
-    CREATE
-    UPDATE
-    DELETE
-    APPROVE
-    REJECT
-    CANCEL
-    LOCK
-    UNLOCK
-    LOGIN
-    LOGOUT
+  CREATE
+  UPDATE
+  DELETE
+  APPROVE
+  REJECT
+  CANCEL
+  LOCK
+  UNLOCK
+  LOGIN
+  LOGOUT
 }
 
 enum EmployeeContractType {
-    PROBATION
-    FIXED_TERM
-    INDEFINITE_TERM
+  PROBATION
+  FIXED_TERM
+  INDEFINITE_TERM
 }
 
 enum EmployeeContractStatus {
-    DRAFT
-    ACTIVE
-    TERMINATED
-    EXPIRED
+  DRAFT
+  ACTIVE
+  TERMINATED
+  EXPIRED
 }
 
 enum EmployeeTerminationType {
-    RESIGNATION
-    TERMINATION
-    CONTRACT_END
-    RETIREMENT
+  RESIGNATION
+  TERMINATION
+  CONTRACT_END
+  RETIREMENT
 }
 
 enum EmployeeTerminationStatus {
-    PENDING
-    APPROVED
-    REJECTED
-    CANCELLED
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
 }
 
 enum BrandStatus {
-    ACTIVE
-    INACTIVE
+  ACTIVE
+  INACTIVE
 }
 
 enum CategoryStatus {
-    ACTIVE
-    INACTIVE
+  ACTIVE
+  INACTIVE
 }
 
 enum ProductStatus {
-    ACTIVE
-    INACTIVE
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  ARCHIVED
 }
 
 enum ProductVariantStatus {
-    ACTIVE
-    INACTIVE
-    ARCHIVED
+  ACTIVE
+  INACTIVE
+  ARCHIVED
 }
 
 enum ProductAttributeType {
-    TEXT
-    NUMBER
-    SELECT
+  TEXT
+  NUMBER
+  SELECT
 }
 
 enum WarehouseStatus {
-    ACTIVE
-    INACTIVE
+  ACTIVE
+  INACTIVE
 }
 
 enum StockMovementType {
-    PURCHASE
-    SALE
-    TRANSFER_IN
-    TRANSFER_OUT
-    ADJUSTMENT
-    RETURN_IN
-    RETURN_OUT
+  PURCHASE
+  SALE
+  TRANSFER_IN
+  TRANSFER_OUT
+  ADJUSTMENT
+  RETURN_IN
+  RETURN_OUT
 }
 
 enum ReferenceType {
-    PURCHASE_ORDER
-    SALES_ORDER
-    TRANSFER
-    ADJUSTMENT
-    PURCHASE_RETURN
-    SALES_RETURN
+  PURCHASE_ORDER
+  SALES_ORDER
+  TRANSFER
+  ADJUSTMENT
+  PURCHASE_RETURN
+  SALES_RETURN
 }
 
 enum StockTransferStatus {
-    DRAFT
-    PENDING
-    APPROVED
-    IN_TRANSIT
-    COMPLETED
-    CANCELLED
+  DRAFT
+  PENDING
+  APPROVED
+  IN_TRANSIT
+  COMPLETED
+  CANCELLED
 }
 
 enum PurchaseOrderStatus {
-    DRAFT
-    ORDERED
-    PARTIALLY_RECEIVED
-    RECEIVED
-    CANCELLED
+  DRAFT
+  ORDERED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
 }
 
 enum SupplierStatus {
-    ACTIVE
-    INACTIVE
+  ACTIVE
+  INACTIVE
 }
 
 enum PurchaseReceiptStatus {
-    DRAFT
-    RECEIVED
-    CANCELLED
+  DRAFT
+  RECEIVED
+  CANCELLED
 }
 
 enum PurchaseReturnStatus {
-    DRAFT
-    PENDING
-    APPROVED
-    COMPLETED
-    CANCELLED
+  DRAFT
+  PENDING
+  APPROVED
+  COMPLETED
+  CANCELLED
 }
 
 enum CustomerStatus {
-    ACTIVE
-    INACTIVE
+  ACTIVE
+  INACTIVE
 }
 
 enum SalesOrderStatus {
-    DRAFT
-    CONFIRMED
-    PROCESSING
-    COMPLETED
-    CANCELLED
+  DRAFT
+  CONFIRMED
+  PROCESSING
+  COMPLETED
+  CANCELLED
 }
 
 enum PaymentMethod {
-    CASH
-    BANK_TRANSFER
-    CARD
-    E_WALLET
+  CASH
+  BANK_TRANSFER
+  CARD
+  E_WALLET
 }
 
 enum PaymentStatus {
-    PENDING
-    COMPLETED
-    FAILED
-    CANCELLED
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
 
 enum SalesReturnStatus {
-    DRAFT
-    PENDING
-    APPROVED
-    COMPLETED
-    CANCELLED
+  DRAFT
+  PENDING
+  APPROVED
+  COMPLETED
+  CANCELLED
 }
 
 enum RefundStatus {
-    PENDING
-    COMPLETED
-    FAILED
-    CANCELLED
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
 
 enum StockAdjustmentStatus {
-    DRAFT
-    PENDING
-    APPROVED
-    COMPLETED
-    CANCELLED
+  DRAFT
+  PENDING
+  APPROVED
+  COMPLETED
+  CANCELLED
 }
 
 enum ShipmentMethod {
-    PICKUP
-    DELIVERY
+  PICKUP
+  DELIVERY
 }
 
 enum ShipmentStatus {
-    PENDING
-    PROCESSING
-    SHIPPED
-    DELIVERED
-    FAILED
-    CANCELLED
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  FAILED
+  CANCELLED
 }
 
 enum PromotionType {
-    PERCENTAGE
-    FIXED_AMOUNT
+  PERCENTAGE
+  FIXED_AMOUNT
 }
 
 enum PromotionStatus {
-    DRAFT
-    ACTIVE
-    INACTIVE
-    EXPIRED
-    CANCELLED
+  DRAFT
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  CANCELLED
 }
 
 enum PromotionConditionType {
-    MIN_ORDER_AMOUNT
-    MIN_QUANTITY
+  MIN_ORDER_AMOUNT
+  MIN_QUANTITY
 }
 
 model Organization {
-    id        String             @id @default(uuid())
-    code      String             @unique
-    name      String
-    taxCode   String?            @unique
-    phone     String?
-    email     String?            @unique
-    // logoMediaId String?
-    website   String?
-    timezone  String             @default("Asia/Ho_Chi_Minh")
-    currency  String             @default("VND")
-    status    OrganizationStatus @default(ACTIVE)
-    createdAt DateTime           @default(now())
-    updatedAt DateTime           @updatedAt
-    deletedAt DateTime?
-    // @@index([createdAt])
-    // @@index([deletedAt])
+  id        String             @id @default(uuid())
+  code      String             @unique
+  name      String
+  taxCode   String?            @unique
+  phone     String?
+  email     String?            @unique
+  // logoMediaId String?
+  website   String?
+  timezone  String             @default("Asia/Ho_Chi_Minh")
+  currency  String             @default("VND")
+  status    OrganizationStatus @default(ACTIVE)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  deletedAt DateTime?
+  // @@index([createdAt])
+  // @@index([deletedAt])
 
-    branches Branch[]
+  branches          Branch[]
+  brands            Brand[]
+  categories        Category[]
+  customers         Customer[]
+  products          Product[]
+  suppliers         Supplier[]
+  productAttributes ProductAttribute[]
 
-    @@index([status])
+  @@index([status])
 }
 
 model Branch {
-    id             String       @id @default(uuid())
-    organizationId String
-    code           String
-    name           String
-    phone          String?
-    email          String?
-    taxCode        String?
-    address        String
-    latitude       Decimal?
-    longitude      Decimal?
-    openTime       String?
-    closeTime      String?
-    timezone       String       @default("Asia/Ho_Chi_Minh")
-    status         BranchStatus @default(ACTIVE)
-    createdAt      DateTime     @default(now())
-    updatedAt      DateTime     @updatedAt
-    deletedAt      DateTime?
+  id             String       @id @default(uuid())
+  organizationId String
+  code           String
+  name           String
+  phone          String?
+  email          String?
+  taxCode        String?
+  address        String
+  latitude       Decimal?
+  longitude      Decimal?
+  openTime       String?
+  closeTime      String?
+  timezone       String       @default("Asia/Ho_Chi_Minh")
+  status         BranchStatus @default(ACTIVE)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deletedAt      DateTime?
 
-    organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
-    departments    Department[]
-    employees      Employee[]
-    shifts         Shift[]
-    holidays       Holiday[]
-    payrollPeriods PayrollPeriod[]
-    warehouses     Warehouse[]
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  departments    Department[]
+  employees      Employee[]
+  shifts         Shift[]
+  holidays       Holiday[]
+  payrollPeriods PayrollPeriod[]
+  warehouses     Warehouse[]
 
-    @@unique([organizationId, code])
+  @@unique([organizationId, code])
 }
 
 model Department {
-    id          String           @id @default(uuid())
-    branchId    String
-    code        String
-    name        String
-    description String?
-    status      DepartmentStatus @default(ACTIVE)
-    createdAt   DateTime         @default(now())
-    updatedAt   DateTime         @updatedAt
-    deletedAt   DateTime?
+  id          String           @id @default(uuid())
+  branchId    String
+  code        String
+  name        String
+  description String?
+  status      DepartmentStatus @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  deletedAt   DateTime?
 
-    branch    Branch     @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    positions Position[]
-    employees Employee[]
+  branch    Branch     @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  positions Position[]
+  employees Employee[]
 
-    @@unique([branchId, code])
+  @@unique([branchId, code])
 }
 
 model Position {
-    id           String         @id @default(uuid())
-    departmentId String
-    code         String
-    name         String
-    level        Int
-    description  String?
-    status       PositionStatus @default(ACTIVE)
-    createdAt    DateTime       @default(now())
-    updatedAt    DateTime       @updatedAt
-    deletedAt    DateTime?
+  id           String         @id @default(uuid())
+  departmentId String
+  code         String
+  name         String
+  level        Int
+  description  String?
+  status       PositionStatus @default(ACTIVE)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
 
-    department Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
-    employees  Employee[]
+  department Department @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  employees  Employee[]
 
-    @@unique([departmentId, code])
+  @@unique([departmentId, code])
 }
 
 model Employee {
-    id              String         @id @default(uuid())
-    branchId        String
-    departmentId    String
-    positionId      String
-    managerId       String?
-    employeeCode    String
-    firstName       String
-    lastName        String
-    fullName        String
-    email           String?        @unique
-    phone           String?        @unique
-    dateOfBirth     DateTime?      @db.Date
-    hireDate        DateTime       @db.Date
-    terminationDate DateTime?      @db.Date
-    employmentType  EmploymentType
-    status          EmployeeStatus @default(ACTIVE)
-    createdAt       DateTime       @default(now())
-    updatedAt       DateTime       @updatedAt
-    deletedAt       DateTime?
+  id              String         @id @default(uuid())
+  branchId        String
+  departmentId    String
+  positionId      String
+  managerId       String?
+  employeeCode    String
+  firstName       String
+  lastName        String
+  fullName        String
+  email           String?        @unique
+  phone           String?        @unique
+  dateOfBirth     DateTime?      @db.Date
+  hireDate        DateTime       @db.Date
+  terminationDate DateTime?      @db.Date
+  employmentType  EmploymentType
+  status          EmployeeStatus @default(ACTIVE)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  deletedAt       DateTime?
 
-    branch                      Branch                     @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    position                    Position                   @relation(fields: [positionId], references: [id], onDelete: Restrict)
-    department                  Department                 @relation(fields: [departmentId], references: [id], onDelete: Restrict)
-    manager                     Employee?                  @relation("EmployeeManager", fields: [managerId], references: [id])
-    subordinates                Employee[]                 @relation("EmployeeManager")
-    user                        User?
-    shiftAssignments            ShiftAssignment[]          @relation("EmployeeShiftAssignment")
-    assignedShiftAssignments    ShiftAssignment[]          @relation("AssignedByEmployee")
-    attendances                 Attendance[]
-    leaveBalances               LeaveBalance[]
-    leaveRequests               LeaveRequest[]             @relation("EmployeeRequest")
-    approvedLeaveRequests       LeaveRequest[]             @relation("EmployeeApprove")
-    cancelLeaveRequests         LeaveRequest[]             @relation("CancelledByEmployee")
-    overTimeRequests            OvertimeRequest[]          @relation("EmployeeOvertimeRequest")
-    approvedOvertimeRequests    OvertimeRequest[]          @relation("EmployeeOvertimeApprove")
-    canceledOvertimeRequests    OvertimeRequest[]          @relation("EmployeeOvertimeCancel")
-    lockedPayrollPeriods        PayrollPeriod[]
-    payrolls                    Payroll[]                  @relation("EmployeePayroll")
-    approvedPayrolls            Payroll[]                  @relation("EmployeeApprovePayroll")
-    payrollAdjustments          PayrollAdjustment[]        @relation("EmployeePayrollAdjustment")
-    approved                    PayrollAdjustment[]        @relation("EmployeeApprovePayrollAdjustment")
-    employeeSalaries            EmployeeSalary[]
-    employeeAllowances          EmployeePayComponent[]
-    employeeBankAccounts        EmployeeBankAccount[]
-    employeeEmergencyContacts   EmployeeEmergencyContact[]
-    employeeDocuments           EmployeeDocument[]
-    employeeContracts           EmployeeContract[]
-    employeeTerminations        EmployeeTermination[]      @relation("EmployeeTermination")
-    employeeApproveTerminations EmployeeTermination[]      @relation("EmployeeApproveTermination")
-    salesOrders                 SalesOrder[]
-    payments                    Payment[]
-    salesReturns                SalesReturn[]
-    refunds                     Refund[]
-    stockAdjustments            StockAdjustment[]
-    priceHistories              PriceHistory[]
+  branch                      Branch                     @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  position                    Position                   @relation(fields: [positionId], references: [id], onDelete: Restrict)
+  department                  Department                 @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  manager                     Employee?                  @relation("EmployeeManager", fields: [managerId], references: [id])
+  subordinates                Employee[]                 @relation("EmployeeManager")
+  user                        User?
+  shiftAssignments            ShiftAssignment[]          @relation("EmployeeShiftAssignment")
+  assignedShiftAssignments    ShiftAssignment[]          @relation("AssignedByEmployee")
+  attendances                 Attendance[]
+  leaveBalances               LeaveBalance[]
+  leaveRequests               LeaveRequest[]             @relation("EmployeeRequest")
+  approvedLeaveRequests       LeaveRequest[]             @relation("EmployeeApprove")
+  cancelLeaveRequests         LeaveRequest[]             @relation("CancelledByEmployee")
+  overTimeRequests            OvertimeRequest[]          @relation("EmployeeOvertimeRequest")
+  approvedOvertimeRequests    OvertimeRequest[]          @relation("EmployeeOvertimeApprove")
+  canceledOvertimeRequests    OvertimeRequest[]          @relation("EmployeeOvertimeCancel")
+  lockedPayrollPeriods        PayrollPeriod[]
+  payrolls                    Payroll[]                  @relation("EmployeePayroll")
+  approvedPayrolls            Payroll[]                  @relation("EmployeeApprovePayroll")
+  payrollAdjustments          PayrollAdjustment[]        @relation("EmployeePayrollAdjustment")
+  approved                    PayrollAdjustment[]        @relation("EmployeeApprovePayrollAdjustment")
+  employeeSalaries            EmployeeSalary[]
+  employeeAllowances          EmployeePayComponent[]
+  employeeBankAccounts        EmployeeBankAccount[]
+  employeeEmergencyContacts   EmployeeEmergencyContact[]
+  employeeDocuments           EmployeeDocument[]
+  employeeContracts           EmployeeContract[]
+  employeeTerminations        EmployeeTermination[]      @relation("EmployeeTermination")
+  employeeApproveTerminations EmployeeTermination[]      @relation("EmployeeApproveTermination")
+  salesOrders                 SalesOrder[]
+  payments                    Payment[]
+  salesReturns                SalesReturn[]
+  refunds                     Refund[]
+  stockAdjustments            StockAdjustment[]
+  priceHistories              PriceHistory[]
 
-    @@unique([branchId, employeeCode])
-    @@index([departmentId])
-    @@index([positionId])
-    @@index([managerId])
-    @@index([status])
+  @@unique([branchId, employeeCode])
+  @@index([departmentId])
+  @@index([positionId])
+  @@index([managerId])
+  @@index([status])
 }
 
 model User {
-    id                String     @id @default(uuid())
-    employeeId        String     @unique
-    username          String     @unique
-    email             String     @unique
-    passwordHash      String
-    failedLoginCount  Int        @default(0)
-    lastLoginAt       DateTime?
-    passwordChangedAt DateTime?
-    lockedUntil       DateTime?
-    status            UserStatus @default(PENDING_ACTIVATION)
-    createdAt         DateTime   @default(now())
-    updatedAt         DateTime   @updatedAt
-    deletedAt         DateTime?
+  id                String     @id @default(uuid())
+  employeeId        String     @unique
+  username          String     @unique
+  email             String     @unique
+  passwordHash      String
+  failedLoginCount  Int        @default(0)
+  lastLoginAt       DateTime?
+  passwordChangedAt DateTime?
+  lockedUntil       DateTime?
+  status            UserStatus @default(PENDING_ACTIVATION)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  deletedAt         DateTime?
 
-    employee                      Employee                 @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-    userRoles                     UserRole[]               @relation("UserRoles")
-    assignedRoles                 UserRole[]               @relation("AssignedUserRoles")
-    revokedRoles                  UserRole[]               @relation("RevokedUserRoles")
-    assignedPermission            RolePermission[]         @relation("AssignedRolePermissions")
-    revokedPermission             RolePermission[]         @relation("RevokedRolePermissions")
-    refreshTokens                 RefreshToken[]           @relation("UserRefreshToken")
-    revokeRefreshTokens           RefreshToken[]           @relation("RevokedRefreshTokenUser")
-    loginHistories                LoginHistory[]
-    passwordResetTokens           PasswordResetToken[]
-    revokedPasswordReset          PasswordResetToken[]     @relation("RevokedPasswordResetTokenUser")
-    emailVerificationTokens       EmailVerificationToken[]
-    revokedEmailVerificationToken EmailVerificationToken[] @relation("RevokedEmailVerificationTokens")
-    stockMovements                StockMovement[]
-    requestStockTransfers         StockTransfer[]          @relation("UserRequest")
-    approveStockTransfers         StockTransfer[]          @relation("UserApprove")
-    purchaseOrders                PurchaseOrder[]
-    purchaseReceipts              PurchaseReceipt[]
-    purchaseReturns               PurchaseReturn[]
+  employee                      Employee                 @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  userRoles                     UserRole[]               @relation("UserRoles")
+  assignedRoles                 UserRole[]               @relation("AssignedUserRoles")
+  revokedRoles                  UserRole[]               @relation("RevokedUserRoles")
+  assignedPermission            RolePermission[]         @relation("AssignedRolePermissions")
+  revokedPermission             RolePermission[]         @relation("RevokedRolePermissions")
+  refreshTokens                 RefreshToken[]           @relation("UserRefreshToken")
+  revokeRefreshTokens           RefreshToken[]           @relation("RevokedRefreshTokenUser")
+  loginHistories                LoginHistory[]
+  passwordResetTokens           PasswordResetToken[]
+  revokedPasswordReset          PasswordResetToken[]     @relation("RevokedPasswordResetTokenUser")
+  emailVerificationTokens       EmailVerificationToken[]
+  revokedEmailVerificationToken EmailVerificationToken[] @relation("RevokedEmailVerificationTokens")
+  stockMovements                StockMovement[]
+  requestStockTransfers         StockTransfer[]          @relation("UserRequest")
+  approveStockTransfers         StockTransfer[]          @relation("UserApprove")
+  purchaseOrders                PurchaseOrder[]
+  purchaseReceipts              PurchaseReceipt[]
+  purchaseReturns               PurchaseReturn[]
+  approvePurchaseReturn         PurchaseReturn[]         @relation("UserApprove")
 
-    @@index([status])
-    @@index([lastLoginAt])
+  @@index([status])
+  @@index([lastLoginAt])
 }
 
 model Role {
-    id              String           @id @default(uuid())
-    code            String           @unique
-    name            String
-    description     String?
-    isSystem        Boolean          @default(false)
-    status          RoleStatus       @default(ACTIVE)
-    createdAt       DateTime         @default(now())
-    updatedAt       DateTime         @updatedAt
-    deletedAt       DateTime?
-    userRoles       UserRole[]
-    userPermissions RolePermission[]
+  id              String           @id @default(uuid())
+  code            String           @unique
+  name            String
+  description     String?
+  isSystem        Boolean          @default(false)
+  status          RoleStatus       @default(ACTIVE)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+  userRoles       UserRole[]
+  userPermissions RolePermission[]
 
-    @@index([status])
+  @@index([status])
 }
 
 model Permission {
-    id              String           @id @default(uuid())
-    code            String           @unique
-    permissionGroup String
-    module          String
-    action          String
-    name            String
-    description     String?
-    isSystem        Boolean          @default(false)
-    status          PermissionStatus @default(ACTIVE)
-    createdAt       DateTime         @default(now())
-    updatedAt       DateTime         @updatedAt
-    deletedAt       DateTime?
-    userPermissions RolePermission[]
+  id              String           @id @default(uuid())
+  code            String           @unique
+  permissionGroup String
+  module          String
+  action          String
+  name            String
+  description     String?
+  isSystem        Boolean          @default(false)
+  status          PermissionStatus @default(ACTIVE)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  deletedAt       DateTime?
+  userPermissions RolePermission[]
 
-    @@unique([module, action])
-    @@index([permissionGroup])
-    @@index([status])
-    @@index([module])
+  @@unique([module, action])
+  @@index([permissionGroup])
+  @@index([status])
+  @@index([module])
 }
 
 model UserRole {
-    id         String         @id @default(uuid())
-    userId     String
-    roleId     String
-    assignedBy String?
-    assignedAt DateTime       @default(now())
-    expiredAt  DateTime?
-    reason     String?
-    status     UserRoleStatus @default(ACTIVE)
-    revokedAt  DateTime?
-    revokedBy  String?
-    createdAt  DateTime       @default(now())
-    updatedAt  DateTime       @updatedAt
-    deletedAt  DateTime?
+  id         String         @id @default(uuid())
+  userId     String
+  roleId     String
+  assignedBy String?
+  assignedAt DateTime       @default(now())
+  expiredAt  DateTime?
+  reason     String?
+  status     UserRoleStatus @default(ACTIVE)
+  revokedAt  DateTime?
+  revokedBy  String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  deletedAt  DateTime?
 
-    user           User  @relation("UserRoles", fields: [userId], references: [id], onDelete: Restrict)
-    role           Role  @relation(fields: [roleId], references: [id], onDelete: Restrict)
-    assignedByUser User? @relation("AssignedUserRoles", fields: [assignedBy], references: [id])
-    revokedByUser  User? @relation("RevokedUserRoles", fields: [revokedBy], references: [id])
+  user           User  @relation("UserRoles", fields: [userId], references: [id], onDelete: Restrict)
+  role           Role  @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  assignedByUser User? @relation("AssignedUserRoles", fields: [assignedBy], references: [id])
+  revokedByUser  User? @relation("RevokedUserRoles", fields: [revokedBy], references: [id])
 
-    
-    @@index([userId])
-    @@index([roleId])
-    @@index([status])
-    @@index([assignedBy])
-    @@index([revokedBy])
-    @@index([expiredAt])
+  @@index([userId])
+  @@index([roleId])
+  @@index([status])
+  @@index([assignedBy])
+  @@index([revokedBy])
+  @@index([expiredAt])
 }
 
 model RolePermission {
-    id           String               @id @default(uuid())
-    roleId       String
-    permissionId String
-    assignedAt   DateTime             @default(now())
-    assignedBy   String?
-    revokedAt    DateTime?
-    revokedBy    String?
-    reason       String?
-    status       RolePermissionStatus @default(ACTIVE)
-    createdAt    DateTime             @default(now())
-    updatedAt    DateTime             @updatedAt
-    deletedAt    DateTime?
+  id           String               @id @default(uuid())
+  roleId       String
+  permissionId String
+  assignedAt   DateTime             @default(now())
+  assignedBy   String?
+  revokedAt    DateTime?
+  revokedBy    String?
+  reason       String?
+  status       RolePermissionStatus @default(ACTIVE)
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  deletedAt    DateTime?
 
-    role           Role       @relation(fields: [roleId], references: [id], onDelete: Restrict)
-    permission     Permission @relation(fields: [permissionId], references: [id], onDelete: Restrict)
-    assignedByUser User?      @relation("AssignedRolePermissions", fields: [assignedBy], references: [id])
-    revokedByUser  User?      @relation("RevokedRolePermissions", fields: [revokedBy], references: [id])
+  role           Role       @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  permission     Permission @relation(fields: [permissionId], references: [id], onDelete: Restrict)
+  assignedByUser User?      @relation("AssignedRolePermissions", fields: [assignedBy], references: [id])
+  revokedByUser  User?      @relation("RevokedRolePermissions", fields: [revokedBy], references: [id])
 
-    @@unique([roleId, permissionId])
-    @@index([roleId])
-    @@index([permissionId])
-    @@index([status])
-    @@index([assignedBy])
-    @@index([revokedBy])
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@index([status])
+  @@index([assignedBy])
+  @@index([revokedBy])
 }
 
 model RefreshToken {
-    id            String    @id @default(uuid())
-    userId        String
-    tokenHash     String    @unique
-    deviceId      String?
-    deviceName    String?
-    ipAddress     String?
-    userAgent     String?
-    expiresAt     DateTime
-    revokedAt     DateTime?
-    revokedBy     String?
-    revokedReason String?
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+  id            String    @id @default(uuid())
+  userId        String
+  tokenHash     String    @unique
+  deviceId      String?
+  deviceName    String?
+  ipAddress     String?
+  userAgent     String?
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  revokedBy     String?
+  revokedReason String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-    user          User  @relation("UserRefreshToken", fields: [userId], references: [id], onDelete: Restrict)
-    revokedByUser User? @relation("RevokedRefreshTokenUser", fields: [revokedBy], references: [id], onDelete: Restrict)
+  user          User  @relation("UserRefreshToken", fields: [userId], references: [id], onDelete: Restrict)
+  revokedByUser User? @relation("RevokedRefreshTokenUser", fields: [revokedBy], references: [id], onDelete: Restrict)
 
-    @@index([userId])
-    @@index([expiresAt])
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model LoginHistory {
-    id           String    @id @default(uuid())
-    userId       String?
-    username     String
-    loginType    LoginType
-    success      Boolean
-    failedReason String?
-    ipAddress    String?
-    userAgent    String?
-    deviceId     String?
-    deviceName   String?
-    createdAt    DateTime  @default(now())
+  id           String    @id @default(uuid())
+  userId       String?
+  username     String
+  loginType    LoginType
+  success      Boolean
+  failedReason String?
+  ipAddress    String?
+  userAgent    String?
+  deviceId     String?
+  deviceName   String?
+  createdAt    DateTime  @default(now())
 
-    user User? @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user User? @relation(fields: [userId], references: [id], onDelete: Restrict)
 
-    @@index([userId])
-    @@index([createdAt])
-    @@index([success])
+  @@index([userId])
+  @@index([createdAt])
+  @@index([success])
 }
 
 model PasswordResetToken {
-    id            String    @id @default(uuid())
-    userId        String
-    tokenHash     String    @unique
-    expiresAt     DateTime
-    usedAt        DateTime?
-    revokedAt     DateTime?
-    revokedBy     String?
-    revokedReason String?
-    createdAt     DateTime  @default(now())
+  id            String    @id @default(uuid())
+  userId        String
+  tokenHash     String    @unique
+  expiresAt     DateTime
+  usedAt        DateTime?
+  revokedAt     DateTime?
+  revokedBy     String?
+  revokedReason String?
+  createdAt     DateTime  @default(now())
 
-    user          User  @relation(fields: [userId], references: [id], onDelete: Restrict)
-    revokedByUser User? @relation("RevokedPasswordResetTokenUser", fields: [revokedBy], references: [id], onDelete: Restrict)
+  user          User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  revokedByUser User? @relation("RevokedPasswordResetTokenUser", fields: [revokedBy], references: [id], onDelete: Restrict)
 
-    @@index([userId])
-    @@index([expiresAt])
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model EmailVerificationToken {
-    id            String    @id @default(uuid())
-    userId        String
-    email         String
-    tokenHash     String    @unique
-    expiresAt     DateTime
-    usedAt        DateTime?
-    revokedAt     DateTime?
-    revokedBy     String?
-    revokedReason String?
-    createdAt     DateTime  @default(now())
+  id            String    @id @default(uuid())
+  userId        String
+  email         String
+  tokenHash     String    @unique
+  expiresAt     DateTime
+  usedAt        DateTime?
+  revokedAt     DateTime?
+  revokedBy     String?
+  revokedReason String?
+  createdAt     DateTime  @default(now())
 
-    user          User  @relation(fields: [userId], references: [id], onDelete: Restrict)
-    revokedByUser User? @relation("RevokedEmailVerificationTokens", fields: [revokedBy], references: [id], onDelete: Restrict)
+  user          User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  revokedByUser User? @relation("RevokedEmailVerificationTokens", fields: [revokedBy], references: [id], onDelete: Restrict)
 
-    @@index([userId])
-    @@index([expiresAt])
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model Shift {
-    id                     String      @id @default(uuid())
-    branchId               String
-    code                   String
-    name                   String
-    startTime              String
-    endTime                String
-    breakMinutes           Int
-    lateGraceMinutes       Int
-    earlyLeaveGraceMinutes Int
-    isCrossDay             Boolean     @default(false)
-    description            String?
-    status                 ShiftStatus @default(ACTIVE)
-    createdAt              DateTime    @default(now())
-    updatedAt              DateTime    @updatedAt
-    deletedAt              DateTime?
+  id                     String      @id @default(uuid())
+  branchId               String
+  code                   String
+  name                   String
+  startTime              String
+  endTime                String
+  breakMinutes           Int
+  lateGraceMinutes       Int
+  earlyLeaveGraceMinutes Int
+  isCrossDay             Boolean     @default(false)
+  description            String?
+  status                 ShiftStatus @default(ACTIVE)
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  deletedAt              DateTime?
 
-    branch           Branch            @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    shiftAssignments ShiftAssignment[]
+  branch           Branch            @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  shiftAssignments ShiftAssignment[]
 
-    @@unique([branchId, code])
-    @@index([status])
+  @@unique([branchId, code])
+  @@index([status])
 }
 
 model ShiftAssignment {
-    id          String                @id @default(uuid())
-    employeeId  String
-    shiftId     String
-    workingDate DateTime              @db.Date
-    assignedBy  String?
-    note        String?
-    status      ShiftAssignmentStatus @default(ACTIVE)
-    createdAt   DateTime              @default(now())
-    updatedAt   DateTime              @updatedAt
-    deletedAt   DateTime?
+  id          String                @id @default(uuid())
+  employeeId  String
+  shiftId     String
+  workingDate DateTime              @db.Date
+  assignedBy  String?
+  note        String?
+  status      ShiftAssignmentStatus @default(ACTIVE)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  deletedAt   DateTime?
 
-    shift              Shift        @relation(fields: [shiftId], references: [id], onDelete: Restrict)
-    employee           Employee     @relation("EmployeeShiftAssignment", fields: [employeeId], references: [id], onDelete: Restrict)
-    assignedByEmployee Employee?    @relation("AssignedByEmployee", fields: [assignedBy], references: [id], onDelete: Restrict)
-    attendances        Attendance[]
+  shift              Shift        @relation(fields: [shiftId], references: [id], onDelete: Restrict)
+  employee           Employee     @relation("EmployeeShiftAssignment", fields: [employeeId], references: [id], onDelete: Restrict)
+  assignedByEmployee Employee?    @relation("AssignedByEmployee", fields: [assignedBy], references: [id], onDelete: Restrict)
+  attendances        Attendance[]
 
-    @@unique([employeeId, workingDate, shiftId])
-    @@index([status])
-    @@index([assignedBy])
-    @@index([workingDate])
+  @@unique([employeeId, workingDate, shiftId])
+  @@index([status])
+  @@index([assignedBy])
+  @@index([workingDate])
 }
 
 model Attendance {
-    id                String           @id @default(uuid())
-    shiftAssignmentId String
-    employeeId        String
-    checkInAt         DateTime?
-    checkOutAt        DateTime?
-    checkInMethod     String?
-    checkOutMethod    String?
-    checkInIp         String?
-    checkOutIp        String?
-    checkInLatitude   Decimal?
-    checkInLongitude  Decimal?
-    checkOutLatitude  Decimal?
-    checkOutLongitude Decimal?
-    workedMinutes     Int              @default(0)
-    workingDate       DateTime         @db.Date
-    lateMinutes       Int              @default(0)
-    earlyLeaveMinutes Int              @default(0)
-    overtimeMinutes   Int              @default(0)
-    attendanceStatus  AttendanceStatus @default(PRESENT)
-    createdAt         DateTime         @default(now())
-    updatedAt         DateTime         @updatedAt
-    deletedAt         DateTime?
+  id                String           @id @default(uuid())
+  shiftAssignmentId String
+  employeeId        String
+  checkInAt         DateTime?
+  checkOutAt        DateTime?
+  checkInMethod     String?
+  checkOutMethod    String?
+  checkInIp         String?
+  checkOutIp        String?
+  checkInLatitude   Decimal?
+  checkInLongitude  Decimal?
+  checkOutLatitude  Decimal?
+  checkOutLongitude Decimal?
+  workedMinutes     Int              @default(0)
+  workingDate       DateTime         @db.Date
+  lateMinutes       Int              @default(0)
+  earlyLeaveMinutes Int              @default(0)
+  overtimeMinutes   Int              @default(0)
+  attendanceStatus  AttendanceStatus @default(PRESENT)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  deletedAt         DateTime?
 
-    shiftAssignment  ShiftAssignment   @relation(fields: [shiftAssignmentId], references: [id], onDelete: Restrict)
-    employee         Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-    overtimeRequests OvertimeRequest[]
+  shiftAssignment  ShiftAssignment   @relation(fields: [shiftAssignmentId], references: [id], onDelete: Restrict)
+  employee         Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  overtimeRequests OvertimeRequest[]
 
-    @@unique([shiftAssignmentId])
-    @@index([workingDate])
-    @@index([attendanceStatus])
-    @@index([employeeId])
-    @@index([employeeId, workingDate])
+  @@unique([shiftAssignmentId])
+  @@index([workingDate])
+  @@index([attendanceStatus])
+  @@index([employeeId])
+  @@index([employeeId, workingDate])
 }
 
 model LeaveType {
-    id                   String          @id @default(uuid())
-    code                 String          @unique
-    name                 String
-    description          String?
-    defaultDays          Int             @default(0)
-    isPaid               Boolean         @default(true)
-    requireApproval      Boolean         @default(true)
-    allowHalfDay         Boolean         @default(true)
-    allowCarryOver       Boolean         @default(false)
-    maxCarryOverDays     Int             @default(0)
-    carryOverExpiryDay   Int?
-    carryOverExpiryMonth Int?
-    status               LeaveTypeStatus @default(ACTIVE)
-    createdAt            DateTime        @default(now())
-    updatedAt            DateTime        @updatedAt
-    deletedAt            DateTime?
-    leaveBalances        LeaveBalance[]
-    leaveRequests        LeaveRequest[]
+  id                   String          @id @default(uuid())
+  code                 String          @unique
+  name                 String
+  description          String?
+  defaultDays          Int             @default(0)
+  isPaid               Boolean         @default(true)
+  requireApproval      Boolean         @default(true)
+  allowHalfDay         Boolean         @default(true)
+  allowCarryOver       Boolean         @default(false)
+  maxCarryOverDays     Int             @default(0)
+  carryOverExpiryDay   Int?
+  carryOverExpiryMonth Int?
+  status               LeaveTypeStatus @default(ACTIVE)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  deletedAt            DateTime?
+  leaveBalances        LeaveBalance[]
+  leaveRequests        LeaveRequest[]
 
-    @@index([status])
+  @@index([status])
 }
 
 model LeaveBalance {
-    id            String         @id @default(uuid())
-    employeeId    String
-    leaveTypeId   String
-    year          Int
-    allocatedDays Float          @default(0)
-    carryOverDays Float          @default(0)
-    adjustedDays  Float          @default(0)
-    usedDays      Float          @default(0)
-    remainingDays Float          @default(0)
-    createdAt     DateTime       @default(now())
-    updatedAt     DateTime       @updatedAt
-    deletedAt     DateTime?
-    leaveRequests LeaveRequest[]
+  id            String         @id @default(uuid())
+  employeeId    String
+  leaveTypeId   String
+  year          Int
+  allocatedDays Float          @default(0)
+  carryOverDays Float          @default(0)
+  adjustedDays  Float          @default(0)
+  usedDays      Float          @default(0)
+  remainingDays Float          @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  leaveRequests LeaveRequest[]
 
-    employee  Employee  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-    leaveType LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+  employee  Employee  @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  leaveType LeaveType @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
 
-    @@unique([employeeId, leaveTypeId, year])
-    @@index([employeeId])
-    @@index([leaveTypeId])
-    @@index([year])
+  @@unique([employeeId, leaveTypeId, year])
+  @@index([employeeId])
+  @@index([leaveTypeId])
+  @@index([year])
 }
 
 model LeaveRequest {
-    id              String             @id @default(uuid())
-    employeeId      String
-    leaveTypeId     String
-    approverId      String?
-    leaveBalanceId  String
-    fromDate        DateTime           @db.Date
-    toDate          DateTime           @db.Date
-    requestedDays   Float
-    isHalfDay       Boolean            @default(false)
-    halfDayType     HalfDayType?
-    reason          String
-    rejectedReason  String?
-    approvedAt      DateTime?
-    rejectedAt      DateTime?
-    cancelledAt     DateTime?
-    cancelledBy     String?
-    cancelledReason String?
-    status          LeaveRequestStatus @default(PENDING)
-    createdAt       DateTime           @default(now())
-    updatedAt       DateTime           @updatedAt
-    deletedAt       DateTime?
+  id              String             @id @default(uuid())
+  employeeId      String
+  leaveTypeId     String
+  approverId      String?
+  leaveBalanceId  String
+  fromDate        DateTime           @db.Date
+  toDate          DateTime           @db.Date
+  requestedDays   Float
+  isHalfDay       Boolean            @default(false)
+  halfDayType     HalfDayType?
+  reason          String
+  rejectedReason  String?
+  approvedAt      DateTime?
+  rejectedAt      DateTime?
+  cancelledAt     DateTime?
+  cancelledBy     String?
+  cancelledReason String?
+  status          LeaveRequestStatus @default(PENDING)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  deletedAt       DateTime?
 
-    employee            Employee     @relation("EmployeeRequest", fields: [employeeId], references: [id], onDelete: Restrict)
-    approver            Employee?    @relation("EmployeeApprove", fields: [approverId], references: [id], onDelete: Restrict)
-    cancelledByEmployee Employee?    @relation("CancelledByEmployee", fields: [cancelledBy], references: [id], onDelete: Restrict)
-    leaveType           LeaveType    @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
-    leaveBalance        LeaveBalance @relation(fields: [leaveBalanceId], references: [id], onDelete: Restrict)
+  employee            Employee     @relation("EmployeeRequest", fields: [employeeId], references: [id], onDelete: Restrict)
+  approver            Employee?    @relation("EmployeeApprove", fields: [approverId], references: [id], onDelete: Restrict)
+  cancelledByEmployee Employee?    @relation("CancelledByEmployee", fields: [cancelledBy], references: [id], onDelete: Restrict)
+  leaveType           LeaveType    @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+  leaveBalance        LeaveBalance @relation(fields: [leaveBalanceId], references: [id], onDelete: Restrict)
 
-    @@index([employeeId])
-    @@index([approverId])
-    @@index([leaveTypeId])
-    @@index([status])
-    @@index([fromDate])
-    @@index([toDate])
+  @@index([employeeId])
+  @@index([approverId])
+  @@index([leaveTypeId])
+  @@index([status])
+  @@index([fromDate])
+  @@index([toDate])
 }
 
 model Holiday {
-    id          String        @id @default(uuid())
-    branchId    String?
-    code        String
-    name        String
-    description String?
-    fromDate    DateTime      @db.Date
-    toDate      DateTime      @db.Date
-    year        Int
-    isPaid      Boolean       @default(true)
-    status      HolidayStatus @default(ACTIVE)
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
-    deletedAt   DateTime?
+  id          String        @id @default(uuid())
+  branchId    String?
+  code        String
+  name        String
+  description String?
+  fromDate    DateTime      @db.Date
+  toDate      DateTime      @db.Date
+  year        Int
+  isPaid      Boolean       @default(true)
+  status      HolidayStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
 
-    branch Branch? @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  branch Branch? @relation(fields: [branchId], references: [id], onDelete: Restrict)
 
-    @@unique([branchId, code, year])
-    @@index([status])
-    @@index([fromDate])
-    @@index([toDate])
-    @@index([year])
-    @@index([branchId])
+  @@unique([branchId, code, year])
+  @@index([status])
+  @@index([fromDate])
+  @@index([toDate])
+  @@index([year])
+  @@index([branchId])
 }
 
 model OvertimeRequest {
-    id                 String                @id @default(uuid())
-    attendanceId       String
-    employeeId         String
-    approverId         String?
-    workingDate        DateTime              @db.Date
-    startTime          DateTime
-    endTime            DateTime
-    requestedMinutes   Int
-    approvedMinutes    Int                   @default(0)
-    overtimeMultiplier Float
-    reason             String
-    approvedAt         DateTime?
-    rejectedAt         DateTime?
-    rejectedReason     String?
-    cancelledAt        DateTime?
-    cancelledBy        String?
-    cancelledReason    String?
-    status             OvertimeRequestStatus @default(PENDING)
-    createdAt          DateTime              @default(now())
-    updatedAt          DateTime              @updatedAt
-    deletedAt          DateTime?
+  id                 String                @id @default(uuid())
+  attendanceId       String
+  employeeId         String
+  approverId         String?
+  workingDate        DateTime              @db.Date
+  startTime          DateTime
+  endTime            DateTime
+  requestedMinutes   Int
+  approvedMinutes    Int                   @default(0)
+  overtimeMultiplier Float
+  reason             String
+  approvedAt         DateTime?
+  rejectedAt         DateTime?
+  rejectedReason     String?
+  cancelledAt        DateTime?
+  cancelledBy        String?
+  cancelledReason    String?
+  status             OvertimeRequestStatus @default(PENDING)
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  deletedAt          DateTime?
 
-    attendance              Attendance @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
-    employeeOvertimeRequest Employee   @relation("EmployeeOvertimeRequest", fields: [employeeId], references: [id], onDelete: Restrict)
-    approver                Employee?  @relation("EmployeeOvertimeApprove", fields: [approverId], references: [id], onDelete: Restrict)
-    cancelledByEmployee     Employee?  @relation("EmployeeOvertimeCancel", fields: [cancelledBy], references: [id], onDelete: Restrict)
+  attendance              Attendance @relation(fields: [attendanceId], references: [id], onDelete: Restrict)
+  employeeOvertimeRequest Employee   @relation("EmployeeOvertimeRequest", fields: [employeeId], references: [id], onDelete: Restrict)
+  approver                Employee?  @relation("EmployeeOvertimeApprove", fields: [approverId], references: [id], onDelete: Restrict)
+  cancelledByEmployee     Employee?  @relation("EmployeeOvertimeCancel", fields: [cancelledBy], references: [id], onDelete: Restrict)
 
-    @@index([employeeId])
-    @@index([approverId])
-    @@index([status])
-    @@index([workingDate])
-    @@index([attendanceId])
+  @@index([employeeId])
+  @@index([approverId])
+  @@index([status])
+  @@index([workingDate])
+  @@index([attendanceId])
 }
 
 model PayrollPeriod {
-    id          String              @id @default(uuid())
-    branchId    String
-    code        String
-    name        String
-    year        Int
-    month       Int
-    periodStart DateTime            @db.Date
-    periodEnd   DateTime            @db.Date
-    lockedAt    DateTime?
-    lockedBy    String?
-    paidAt      DateTime?
-    status      PayrollPeriodStatus @default(OPEN)
-    createdAt   DateTime            @default(now())
-    updatedAt   DateTime            @updatedAt
-    deletedAt   DateTime?
+  id          String              @id @default(uuid())
+  branchId    String
+  code        String
+  name        String
+  year        Int
+  month       Int
+  periodStart DateTime            @db.Date
+  periodEnd   DateTime            @db.Date
+  lockedAt    DateTime?
+  lockedBy    String?
+  paidAt      DateTime?
+  status      PayrollPeriodStatus @default(OPEN)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  deletedAt   DateTime?
 
-    branch           Branch    @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    lockedByEmployee Employee? @relation(fields: [lockedBy], references: [id], onDelete: Restrict)
-    payrolls         Payroll[]
+  branch           Branch    @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  lockedByEmployee Employee? @relation(fields: [lockedBy], references: [id], onDelete: Restrict)
+  payrolls         Payroll[]
 
-    @@unique([branchId, year, month])
-    @@index([status])
-    @@index([paidAt])
+  @@unique([branchId, year, month])
+  @@index([status])
+  @@index([paidAt])
 }
 
 model Payroll {
-    id              String        @id @default(uuid())
-    payrollPeriodId String
-    employeeId      String
-    baseSalary      Decimal
-    totalEarnings   Decimal
-    totalDeductions Decimal
-    grossSalary     Decimal
-    netSalary       Decimal
-    workingDays     Int
-    paidLeaveDays   Int
-    unpaidLeaveDays Int
-    overtimeMinutes Int
-    overtimeAmount  Decimal
-    status          PayrollStatus @default(PENDING)
-    calculatedAt    DateTime?
-    approvedAt      DateTime?
-    approvedBy      String?
-    paidAt          DateTime?
-    createdAt       DateTime      @default(now())
-    updatedAt       DateTime      @updatedAt
-    deletedAt       DateTime?
+  id              String        @id @default(uuid())
+  payrollPeriodId String
+  employeeId      String
+  baseSalary      Decimal
+  totalEarnings   Decimal
+  totalDeductions Decimal
+  grossSalary     Decimal
+  netSalary       Decimal
+  workingDays     Int
+  paidLeaveDays   Int
+  unpaidLeaveDays Int
+  overtimeMinutes Int
+  overtimeAmount  Decimal
+  status          PayrollStatus @default(PENDING)
+  calculatedAt    DateTime?
+  approvedAt      DateTime?
+  approvedBy      String?
+  paidAt          DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?
 
-    payrollPeriod      PayrollPeriod       @relation(fields: [payrollPeriodId], references: [id], onDelete: Restrict)
-    employee           Employee            @relation("EmployeePayroll", fields: [employeeId], references: [id], onDelete: Restrict)
-    approvedByEmployee Employee?           @relation("EmployeeApprovePayroll", fields: [approvedBy], references: [id], onDelete: Restrict)
-    payrollItems       PayrollItem[]
-    payrollAdjustments PayrollAdjustment[]
-    payrollTaxes       PayrollTax[]
+  payrollPeriod      PayrollPeriod       @relation(fields: [payrollPeriodId], references: [id], onDelete: Restrict)
+  employee           Employee            @relation("EmployeePayroll", fields: [employeeId], references: [id], onDelete: Restrict)
+  approvedByEmployee Employee?           @relation("EmployeeApprovePayroll", fields: [approvedBy], references: [id], onDelete: Restrict)
+  payrollItems       PayrollItem[]
+  payrollAdjustments PayrollAdjustment[]
+  payrollTaxes       PayrollTax[]
 
-    @@unique([payrollPeriodId, employeeId])
-    @@index([status])
-    @@index([employeeId])
+  @@unique([payrollPeriodId, employeeId])
+  @@index([status])
+  @@index([employeeId])
 }
 
 model PayrollItem {
-    id          String            @id @default(uuid())
-    payrollId   String
-    type        PayrollItemType
-    code        String
-    name        String
-    description String?
-    amount      Decimal
-    quantity    Decimal?
-    unitAmount  Decimal?
-    source      PayrollItemSource
-    reason      String?
-    createdAt   DateTime          @default(now())
-    updatedAt   DateTime          @updatedAt
-    deletedAt   DateTime?
+  id          String            @id @default(uuid())
+  payrollId   String
+  type        PayrollItemType
+  code        String
+  name        String
+  description String?
+  amount      Decimal
+  quantity    Decimal?
+  unitAmount  Decimal?
+  source      PayrollItemSource
+  reason      String?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  deletedAt   DateTime?
 
-    payroll Payroll @relation(fields: [payrollId], references: [id], onDelete: Restrict)
+  payroll Payroll @relation(fields: [payrollId], references: [id], onDelete: Restrict)
 
-    @@index([payrollId])
-    @@index([type])
-    @@index([source])
-    @@index([code])
+  @@index([payrollId])
+  @@index([type])
+  @@index([source])
+  @@index([code])
 }
 
 model PayrollAdjustment {
-    id         String                  @id @default(uuid())
-    payrollId  String
-    employeeId String
-    type       PayrollAdjustmentType
-    amount     Decimal
-    reason     String
-    approvedBy String?
-    approvedAt DateTime?
-    status     PayrollAdjustmentStatus @default(PENDING)
-    createdAt  DateTime                @default(now())
-    updatedAt  DateTime                @updatedAt
-    deletedAt  DateTime?
+  id         String                  @id @default(uuid())
+  payrollId  String
+  employeeId String
+  type       PayrollAdjustmentType
+  amount     Decimal
+  reason     String
+  approvedBy String?
+  approvedAt DateTime?
+  status     PayrollAdjustmentStatus @default(PENDING)
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @updatedAt
+  deletedAt  DateTime?
 
-    payroll  Payroll   @relation(fields: [payrollId], references: [id], onDelete: Restrict)
-    employee Employee  @relation("EmployeePayrollAdjustment", fields: [employeeId], references: [id], onDelete: Restrict)
-    approver Employee? @relation("EmployeeApprovePayrollAdjustment", fields: [approvedBy], references: [id], onDelete: Restrict)
+  payroll  Payroll   @relation(fields: [payrollId], references: [id], onDelete: Restrict)
+  employee Employee  @relation("EmployeePayrollAdjustment", fields: [employeeId], references: [id], onDelete: Restrict)
+  approver Employee? @relation("EmployeeApprovePayrollAdjustment", fields: [approvedBy], references: [id], onDelete: Restrict)
 }
 
 model EmployeeSalary {
-    id            String    @id @default(uuid())
-    employeeId    String
-    baseSalary    Decimal
-    effectiveFrom DateTime
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    deletedAt     DateTime?
+  id            String    @id @default(uuid())
+  employeeId    String
+  baseSalary    Decimal
+  effectiveFrom DateTime
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
-    employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
 
-    @@index([employeeId])
-    @@index([effectiveFrom])
+  @@index([employeeId])
+  @@index([effectiveFrom])
 }
 
 model EmployeePayComponent {
-    id            String                   @id @default(uuid())
-    employeeId    String
-    code          String
-    type          EmployeePayComponentType
-    amount        Decimal
-    effectiveFrom DateTime
-    createdAt     DateTime                 @default(now())
-    updatedAt     DateTime                 @updatedAt
-    deletedAt     DateTime?
+  id            String                   @id @default(uuid())
+  employeeId    String
+  code          String
+  type          EmployeePayComponentType
+  amount        Decimal
+  effectiveFrom DateTime
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  deletedAt     DateTime?
 
-    employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
 
-    @@index([employeeId, code])
-    @@index([effectiveFrom])
+  @@index([employeeId, code])
+  @@index([effectiveFrom])
 }
 
 model PayrollTax {
-    id            String    @id @default(uuid())
-    payrollId     String
-    taxableIncome Decimal
-    taxAmount     Decimal
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    deletedAt     DateTime?
+  id            String    @id @default(uuid())
+  payrollId     String
+  taxableIncome Decimal
+  taxAmount     Decimal
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
-    payroll Payroll @relation(fields: [payrollId], references: [id], onDelete: Restrict)
+  payroll Payroll @relation(fields: [payrollId], references: [id], onDelete: Restrict)
 
-    @@unique([payrollId])
+  @@unique([payrollId])
 }
 
 model EmployeeBankAccount {
-    id            String    @id @default(uuid())
-    employeeId    String
-    bankCode      String
-    accountNumber String
-    accountName   String
-    isPrimary     Boolean   @default(false)
-    effectiveFrom DateTime
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    deletedAt     DateTime?
+  id            String    @id @default(uuid())
+  employeeId    String
+  bankCode      String
+  accountNumber String
+  accountName   String
+  isPrimary     Boolean   @default(false)
+  effectiveFrom DateTime
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
-    employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
 
-    @@unique([employeeId, bankCode, accountNumber])
-    @@index([employeeId])
+  @@unique([employeeId, bankCode, accountNumber])
+  @@index([employeeId])
 }
 
 model EmployeeEmergencyContact {
-    id           String    @id @default(uuid())
-    employeeId   String
-    name         String
-    relationship String
-    phone        String
-    isPrimary    Boolean   @default(false)
-    createdAt    DateTime  @default(now())
-    updatedAt    DateTime  @updatedAt
-    deletedAt    DateTime?
+  id           String    @id @default(uuid())
+  employeeId   String
+  name         String
+  relationship String
+  phone        String
+  isPrimary    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
 
-    employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Restrict)
 
-    @@unique([employeeId, relationship])
+  @@unique([employeeId, relationship])
 }
 
 model EmployeeDocument {
-    id             String                 @id @default(uuid())
-    employeeId     String
-    documentType   EmployeeDocumentType
-    filePath       String
-    documentNumber String?
-    issueDate      DateTime?
-    expiryDate     DateTime?
-    fileName       String
-    status         EmployeeDocumentStatus @default(ACTIVE)
-    createdAt      DateTime               @default(now())
-    updatedAt      DateTime               @updatedAt
-    deletedAt      DateTime?
+  id             String                 @id @default(uuid())
+  employeeId     String
+  documentType   EmployeeDocumentType
+  filePath       String
+  documentNumber String?
+  issueDate      DateTime?
+  expiryDate     DateTime?
+  fileName       String
+  status         EmployeeDocumentStatus @default(ACTIVE)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  deletedAt      DateTime?
 
-    employee          Employee           @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-    employeeContracts EmployeeContract[]
+  employee          Employee           @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  employeeContracts EmployeeContract[]
 
-    @@index([employeeId])
-    @@index([documentType])
-    @@index([status])
+  @@index([employeeId])
+  @@index([documentType])
+  @@index([status])
 }
 
 model AuditLog {
-    id         String          @id @default(uuid())
-    entityType AuditEntityType
-    entityId   String
-    action     AuditAction
-    changedBy  String?
-    oldValue   Json?
-    newValue   Json?
-    ipAddress  String?
-    userAgent  String?
-    createdAt  DateTime        @default(now())
+  id         String          @id @default(uuid())
+  entityType AuditEntityType
+  entityId   String
+  action     AuditAction
+  changedBy  String?
+  oldValue   Json?
+  newValue   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime        @default(now())
 
-    @@index([entityType, entityId])
-    @@index([action])
+  @@index([entityType, entityId])
+  @@index([action])
 }
 
 model EmployeeContract {
-    id             String                 @id @default(uuid())
-    employeeId     String
-    contractNumber String?
-    contractType   EmployeeContractType
-    startDate      DateTime
-    endDate        DateTime?
-    status         EmployeeContractStatus @default(DRAFT)
-    baseSalary     Decimal
-    documentId     String?
-    createdAt      DateTime               @default(now())
-    updatedAt      DateTime               @updatedAt
-    deletedAt      DateTime?
+  id             String                 @id @default(uuid())
+  employeeId     String
+  contractNumber String?
+  contractType   EmployeeContractType
+  startDate      DateTime
+  endDate        DateTime?
+  status         EmployeeContractStatus @default(DRAFT)
+  baseSalary     Decimal
+  documentId     String?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  deletedAt      DateTime?
 
-    employee Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
-    document EmployeeDocument? @relation(fields: [documentId], references: [id], onDelete: Restrict)
+  employee Employee          @relation(fields: [employeeId], references: [id], onDelete: Restrict)
+  document EmployeeDocument? @relation(fields: [documentId], references: [id], onDelete: Restrict)
 
-    @@unique([employeeId, contractType, startDate, endDate])
-    @@index([status])
+  @@unique([employeeId, contractType, startDate, endDate])
+  @@index([status])
 }
 
 model EmployeeTermination {
-    id              String                    @id @default(uuid())
-    employeeId      String
-    terminationDate DateTime
-    reason          String?
-    type            EmployeeTerminationType
-    status          EmployeeTerminationStatus @default(PENDING)
-    note            String?
-    approvedAt      DateTime?
-    approvedBy      String?
+  id              String                    @id @default(uuid())
+  employeeId      String
+  terminationDate DateTime
+  reason          String?
+  type            EmployeeTerminationType
+  status          EmployeeTerminationStatus @default(PENDING)
+  note            String?
+  approvedAt      DateTime?
+  approvedBy      String?
 
-    employeeTermination Employee  @relation("EmployeeTermination", fields: [employeeId], references: [id], onDelete: Restrict)
-    employeeApprove     Employee? @relation("EmployeeApproveTermination", fields: [approvedBy], references: [id], onDelete: Restrict)
+  employeeTermination Employee  @relation("EmployeeTermination", fields: [employeeId], references: [id], onDelete: Restrict)
+  employeeApprove     Employee? @relation("EmployeeApproveTermination", fields: [approvedBy], references: [id], onDelete: Restrict)
 
-    @@index([employeeId])
-    @@index([status])
-    @@index([type])
-    @@index([terminationDate])
+  @@index([employeeId])
+  @@index([status])
+  @@index([type])
+  @@index([terminationDate])
 }
 
 model Brand {
-    id          String      @id @default(uuid())
-    code        String      @unique
-    name        String
-    description String?
-    status      BrandStatus @default(ACTIVE)
-    logoUrl     String?
-    createdAt   DateTime    @default(now())
-    updatedAt   DateTime    @updatedAt
-    deletedAt   DateTime?
-    products    Product[]
+  id             String      @id @default(uuid())
+  code           String
+  name           String
+  description    String?
+  status         BrandStatus @default(ACTIVE)
+  logoUrl        String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  deletedAt      DateTime?
+  products       Product[]
+  organizationId String
 
-    @@index([status])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([code, organizationId])
+  @@index([status])
 }
 
 model Category {
-    id          String         @id @default(uuid())
-    code        String         @unique
-    name        String
-    parentId    String?
-    description String?
-    status      CategoryStatus @default(ACTIVE)
-    createdAt   DateTime       @default(now())
-    updatedAt   DateTime       @updatedAt
-    deletedAt   DateTime?
+  id             String         @id @default(uuid())
+  code           String
+  name           String
+  parentId       String?
+  description    String?
+  status         CategoryStatus @default(ACTIVE)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
+  organizationId String
 
-    parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
-    children Category[] @relation("CategoryHierarchy")
-    products Product[]
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  parent       Category?    @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children     Category[]   @relation("CategoryHierarchy")
+  products     Product[]
 
-    @@index([parentId])
-    @@index([status])
+  @@unique([organizationId, code])
+  @@index([parentId])
+  @@index([status])
 }
 
 model Product {
-    id          String        @id @default(uuid())
-    brandId     String
-    categoryId  String
-    name        String
-    code        String        @unique
-    description String?
-    status      ProductStatus @default(ACTIVE)
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
-    deletedAt   DateTime?
+  id             String        @id @default(uuid())
+  brandId        String
+  categoryId     String
+  name           String
+  code           String
+  description    String?
+  status         ProductStatus @default(ACTIVE)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  deletedAt      DateTime?
+  organizationId String
 
-    brand           Brand            @relation(fields: [brandId], references: [id], onDelete: Restrict)
-    category        Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-    productVariants ProductVariant[]
-    productImages   ProductImage[]
+  organization    Organization     @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+  brand           Brand            @relation(fields: [brandId], references: [id], onDelete: Restrict)
+  category        Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  productVariants ProductVariant[]
+  productImages   ProductImage[]
 
-    @@index([brandId])
-    @@index([categoryId])
-    @@index([status])
+  @@unique([organizationId, code])
+  @@index([brandId])
+  @@index([categoryId])
+  @@index([status])
 }
 
 model ProductVariant {
-    id                      String                    @id @default(uuid())
-    productId               String
-    sku                     String                    @unique
-    name                    String
-    barcode                 String?
-    costPrice               Decimal
-    sellingPrice            Decimal
-    status                  ProductVariantStatus      @default(ACTIVE)
-    createdAt               DateTime                  @default(now())
-    updatedAt               DateTime                  @updatedAt
-    deletedAt               DateTime?
-    product                 Product                   @relation(fields: [productId], references: [id], onDelete: Restrict)
-    productVarianAttributes ProductVariantAttribute[]
-    stocks                  Stock[]
-    stockTransferItems      StockTransferItem[]
-    purchaseOrderItems      PurchaseOrderItem[]
-    purchaseReturnItems     PurchaseReturnItem[]
-    salesOrderItems         SalesOrderItem[]
-    stockAdjustmentItems    StockAdjustmentItem[]
-    promotionVariants       PromotionVariant[]
-    priceHistories          PriceHistory[]
-    productSuppliers        ProductSupplier[]
+  id                       String                    @id @default(uuid())
+  productId                String
+  sku                      String                    @unique
+  name                     String
+  barcode                  String?                   @unique
+  costPrice                Decimal                   @db.Decimal(15, 2)
+  sellingPrice             Decimal                   @db.Decimal(15, 2)
+  status                   ProductVariantStatus      @default(ACTIVE)
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  deletedAt                DateTime?
+  product                  Product                   @relation(fields: [productId], references: [id], onDelete: Restrict)
+  productVariantAttributes ProductVariantAttribute[]
+  stocks                   Stock[]
+  stockTransferItems       StockTransferItem[]
+  purchaseOrderItems       PurchaseOrderItem[]
+  salesOrderItems          SalesOrderItem[]
+  stockAdjustmentItems     StockAdjustmentItem[]
+  promotionVariants        PromotionVariant[]
+  priceHistories           PriceHistory[]
+  productSuppliers         ProductSupplier[]
 
-    @@index([productId])
-    @@index([barcode])
-    @@index([status])
+  @@index([productId])
+  @@index([status])
 }
 
 model ProductImage {
-    id        String    @id @default(uuid())
-    productId String
-    filePath  String
-    isPrimary Boolean   @default(false)
-    fileName  String
-    sortOrder Int       @default(0)
-    altText   String?
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    deletedAt DateTime?
+  id        String    @id @default(uuid())
+  productId String
+  filePath  String
+  isPrimary Boolean   @default(false)
+  fileName  String
+  sortOrder Int       @default(0)
+  altText   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-    product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
 
-    @@index([productId])
+  @@index([productId])
 }
 
 model ProductAttribute {
-    id                       String                    @id @default(uuid())
-    code                     String                    @unique
-    name                     String
-    type                     ProductAttributeType      @default(SELECT)
-    createdAt                DateTime                  @default(now())
-    updatedAt                DateTime                  @updatedAt
-    deletedAt                DateTime?
-    productVariantAttributes ProductVariantAttribute[]
+  id                       String                    @id @default(uuid())
+  code                     String
+  name                     String
+  type                     ProductAttributeType      @default(SELECT)
+  createdAt                DateTime                  @default(now())
+  updatedAt                DateTime                  @updatedAt
+  deletedAt                DateTime?
+  productVariantAttributes ProductVariantAttribute[]
+  organizationId           String
 
-    @@index([name])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, code])
+  @@index([name])
 }
 
 model ProductVariantAttribute {
-    id          String    @id @default(uuid())
-    variantId   String
-    attributeId String
-    value       String
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    deletedAt   DateTime?
+  id          String    @id @default(uuid())
+  variantId   String
+  attributeId String
+  value       String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
-    variant   ProductVariant   @relation(fields: [variantId], references: [id], onDelete: Restrict)
-    attribute ProductAttribute @relation(fields: [attributeId], references: [id], onDelete: Restrict)
+  variant   ProductVariant   @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  attribute ProductAttribute @relation(fields: [attributeId], references: [id], onDelete: Restrict)
 
-    @@unique([variantId, attributeId])
+  @@unique([variantId, attributeId])
 }
 
 model ProductSupplier {
-    id          String    @id @default(uuid())
-    variantId   String
-    supplierId  String
-    supplierSku String?
-    unitCost    Decimal
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    deletedAt   DateTime?
+  id          String    @id @default(uuid())
+  variantId   String
+  supplierId  String
+  supplierSku String?
+  unitCost    Decimal   @db.Decimal(15, 2)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
-    productVariant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
-    supplier       Supplier       @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  productVariant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  supplier       Supplier       @relation(fields: [supplierId], references: [id], onDelete: Restrict)
 
-    @@unique([variantId, supplierId])
+  @@unique([variantId, supplierId])
 }
 
 model Warehouse {
-    id          String          @id @default(uuid())
-    branchId    String
-    code        String
-    name        String
-    description String?
-    status      WarehouseStatus @default(ACTIVE)
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @updatedAt
-    deletedAt   DateTime?
+  id          String          @id @default(uuid())
+  branchId    String
+  code        String
+  name        String
+  description String?
+  status      WarehouseStatus @default(ACTIVE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  deletedAt   DateTime?
 
-    branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Restrict)
-    stocks              Stock[]
-    transfersFromStock  StockTransfer[]      @relation("FromWarehouse")
-    transfersToStock    StockTransfer[]      @relation("ToWarehouse")
-    purchaseOrders      PurchaseOrder[]
-    purchaseReceipts    PurchaseReceipt[]
-    purchaseReturns     PurchaseReturn[]
-    salesOrders         SalesOrder[]
-    salesReturns        SalesReturn[]
-    stockAdjustments    StockAdjustment[]
-    salesOrderShipments SalesOrderShipment[]
+  branch              Branch               @relation(fields: [branchId], references: [id], onDelete: Restrict)
+  stocks              Stock[]
+  transfersFromStock  StockTransfer[]      @relation("FromWarehouse")
+  transfersToStock    StockTransfer[]      @relation("ToWarehouse")
+  purchaseOrders      PurchaseOrder[]
+  purchaseReceipts    PurchaseReceipt[]
+  purchaseReturns     PurchaseReturn[]
+  salesOrders         SalesOrder[]
+  salesReturns        SalesReturn[]
+  stockAdjustments    StockAdjustment[]
+  salesOrderShipments SalesOrderShipment[]
 
-    @@unique([branchId, code])
-    @@index([status])
-    @@index([name])
+  @@unique([branchId, code])
+  @@index([status])
+  @@index([name])
 }
 
 model Stock {
-    id               String    @id @default(uuid())
-    warehouseId      String
-    variantId        String
-    quantity         Int       @default(0)
-    reservedQuantity Int       @default(0)
-    createdAt        DateTime  @default(now())
-    updatedAt        DateTime  @updatedAt
-    deletedAt        DateTime?
+  id               String    @id @default(uuid())
+  warehouseId      String
+  variantId        String
+  quantity         Int       @default(0)
+  reservedQuantity Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
 
-    warehouse      Warehouse       @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    variant        ProductVariant  @relation(fields: [variantId], references: [id], onDelete: Restrict)
-    stockMovements StockMovement[]
+  warehouse      Warehouse       @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  variant        ProductVariant  @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  stockMovements StockMovement[]
 
-    @@unique([warehouseId, variantId])
+  @@unique([warehouseId, variantId])
 }
 
 model StockMovement {
-    id            String            @id @default(uuid())
-    stockId       String
-    type          StockMovementType @default(PURCHASE)
-    quantity      Int
-    referenceType ReferenceType?
-    referenceId   String?
-    note          String?
-    balanceAfter  Int
-    createdBy     String
+  id            String            @id @default(uuid())
+  stockId       String
+  type          StockMovementType @default(PURCHASE)
+  quantity      Int
+  referenceType ReferenceType?
+  referenceId   String?
+  note          String?
+  balanceAfter  Int
+  createdBy     String
+  createdAt     DateTime          @default(now())
+  stock         Stock             @relation(fields: [stockId], references: [id], onDelete: Restrict)
+  user          User              @relation(fields: [createdBy], references: [id], onDelete: Restrict)
 
-    stock Stock @relation(fields: [stockId], references: [id], onDelete: Restrict)
-    user  User  @relation(fields: [createdBy], references: [id], onDelete: Restrict)
-
-    @@index([type])
-    @@index([referenceType])
-    @@index([stockId])
+  @@index([type])
+  @@index([referenceType])
+  @@index([stockId])
+  @@index([createdAt])
 }
 
 model StockTransfer {
-    id              String              @id @default(uuid())
-    fromWarehouseId String
-    toWarehouseId   String
-    status          StockTransferStatus @default(DRAFT)
-    code            String              @unique
-    requestedBy     String
-    approvedBy      String?
-    approvedAt      DateTime?
-    completedAt     DateTime?
-    note            String?
-    createdAt       DateTime            @default(now())
-    updatedAt       DateTime            @updatedAt
-    deletedAt       DateTime?
+  id              String              @id @default(uuid())
+  fromWarehouseId String
+  toWarehouseId   String
+  status          StockTransferStatus @default(DRAFT)
+  code            String              @unique
+  requestedBy     String
+  approvedBy      String?
+  approvedAt      DateTime?
+  completedAt     DateTime?
+  note            String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  deletedAt       DateTime?
 
-    fromWarehouse      Warehouse           @relation("FromWarehouse", fields: [fromWarehouseId], references: [id], onDelete: Restrict)
-    toWarehouse        Warehouse           @relation("ToWarehouse", fields: [toWarehouseId], references: [id], onDelete: Restrict)
-    userRequest        User?               @relation("UserRequest", fields: [requestedBy], references: [id], onDelete: Restrict)
-    userApprove        User?               @relation("UserApprove", fields: [approvedBy], references: [id], onDelete: Restrict)
-    stockTransferItems StockTransferItem[]
+  fromWarehouse      Warehouse           @relation("FromWarehouse", fields: [fromWarehouseId], references: [id], onDelete: Restrict)
+  toWarehouse        Warehouse           @relation("ToWarehouse", fields: [toWarehouseId], references: [id], onDelete: Restrict)
+  userRequest        User?               @relation("UserRequest", fields: [requestedBy], references: [id], onDelete: Restrict)
+  userApprove        User?               @relation("UserApprove", fields: [approvedBy], references: [id], onDelete: Restrict)
+  stockTransferItems StockTransferItem[]
 
-    @@index([status])
-    @@index([fromWarehouseId])
-    @@index([toWarehouseId])
+  @@index([status])
+  @@index([fromWarehouseId])
+  @@index([toWarehouseId])
 }
 
 model StockTransferItem {
-    id               String    @id @default(uuid())
-    stockTransferId  String
-    variantId        String
-    quantity         Int
-    receivedQuantity Int       @default(0)
-    createdAt        DateTime  @default(now())
-    updatedAt        DateTime  @updatedAt
-    deletedAt        DateTime?
+  id               String    @id @default(uuid())
+  stockTransferId  String
+  variantId        String
+  quantity         Int
+  receivedQuantity Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
 
-    stockTransfer StockTransfer  @relation(fields: [stockTransferId], references: [id], onDelete: Restrict)
-    variant       ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  stockTransfer StockTransfer  @relation(fields: [stockTransferId], references: [id], onDelete: Restrict)
+  variant       ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
-    @@unique([stockTransferId, variantId])
+  @@unique([stockTransferId, variantId])
 }
 
 model Supplier {
-    id               String            @id @default(uuid())
-    code             String            @unique
-    name             String
-    status           SupplierStatus    @default(ACTIVE)
-    taxCode          String?           @unique
-    phone            String?
-    email            String?
-    address          String?
-    contactName      String?
-    note             String?
-    createdAt        DateTime          @default(now())
-    updatedAt        DateTime          @updatedAt
-    deletedAt        DateTime?
-    purchaseOrders   PurchaseOrder[]
-    purchaseReturns  PurchaseReturn[]
-    productSuppliers ProductSupplier[]
+  id               String            @id @default(uuid())
+  code             String
+  name             String
+  status           SupplierStatus    @default(ACTIVE)
+  taxCode          String?
+  phone            String?
+  email            String?
+  address          String?
+  contactName      String?
+  note             String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  deletedAt        DateTime?
+  purchaseOrders   PurchaseOrder[]
+  productSuppliers ProductSupplier[]
+  organizationId   String
 
-    @@index([status])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, taxCode])
+  @@unique([organizationId, code])
+  @@index([status])
 }
 
 model PurchaseOrder {
-    id          String              @id @default(uuid())
-    warehouseId String
-    supplierId  String
-    status      PurchaseOrderStatus @default(DRAFT)
-    code        String              @unique
-    orderedAt   DateTime?
-    expectedAt  DateTime?
-    receivedAt  DateTime?
-    createdBy   String
-    note        String?
-    createdAt   DateTime            @default(now())
-    updatedAt   DateTime            @updatedAt
-    deletedAt   DateTime?
+  id          String              @id @default(uuid())
+  warehouseId String
+  supplierId  String
+  status      PurchaseOrderStatus @default(DRAFT)
+  code        String              @unique
+  orderedAt   DateTime?
+  expectedAt  DateTime?
+  receivedAt  DateTime?
+  createdBy   String
+  note        String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  deletedAt   DateTime?
 
-    warehouse          Warehouse           @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    supplier           Supplier            @relation(fields: [supplierId], references: [id], onDelete: Restrict)
-    user               User?               @relation(fields: [createdBy], references: [id], onDelete: Restrict)
-    purchaseOrderItems PurchaseOrderItem[]
-    purchaseReceipts   PurchaseReceipt[]
-    purchaseReturns    PurchaseReturn[]
+  warehouse          Warehouse           @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  supplier           Supplier            @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  user               User                @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  purchaseOrderItems PurchaseOrderItem[]
+  purchaseReceipts   PurchaseReceipt[]
+  purchaseReturns    PurchaseReturn[]
 
-    @@index([status])
-    @@index([orderedAt])
-    @@index([warehouseId])
-    @@index([supplierId])
+  @@index([status])
+  @@index([orderedAt])
+  @@index([warehouseId])
+  @@index([supplierId])
 }
 
 model PurchaseOrderItem {
-    id               String  @id @default(uuid())
-    purchaseOrderId  String
-    variantId        String
-    quantity         Int
-    receivedQuantity Int     @default(0)
-    unitCost         Decimal
-    note             String?
+  id               String  @id @default(uuid())
+  purchaseOrderId  String
+  variantId        String
+  quantity         Int
+  receivedQuantity Int     @default(0)
+  unitCost         Decimal @db.Decimal(15, 2)
+  note             String?
 
-    purchaseOrder        PurchaseOrder         @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
-    variant              ProductVariant        @relation(fields: [variantId], references: [id], onDelete: Restrict)
-    purchaseReceiptItems PurchaseReceiptItem[]
+  purchaseOrder        PurchaseOrder         @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+  variant              ProductVariant        @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  purchaseReceiptItems PurchaseReceiptItem[]
 
-    @@unique([purchaseOrderId, variantId])
+  @@unique([purchaseOrderId, variantId])
 }
 
 model PurchaseReceipt {
-    id              String                @id @default(uuid())
-    purchaseOrderId String
-    warehouseId     String
-    status          PurchaseReceiptStatus @default(DRAFT)
-    code            String                @unique
-    receivedAt      DateTime?
-    receivedBy      String?
-    note            String?
-    createdAt       DateTime              @default(now())
-    updatedAt       DateTime              @updatedAt
-    deletedAt       DateTime?
+  id              String                @id @default(uuid())
+  purchaseOrderId String
+  warehouseId     String
+  status          PurchaseReceiptStatus @default(DRAFT)
+  code            String                @unique
+  receivedAt      DateTime?
+  receivedBy      String?
+  note            String?
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  deletedAt       DateTime?
 
-    purchaseOrder        PurchaseOrder         @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
-    warehouse            Warehouse             @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    user                 User?                 @relation(fields: [receivedBy], references: [id], onDelete: Restrict)
-    purchaseReceiptItems PurchaseReceiptItem[]
+  purchaseOrder        PurchaseOrder         @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+  warehouse            Warehouse             @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  user                 User?                 @relation(fields: [receivedBy], references: [id], onDelete: Restrict)
+  purchaseReceiptItems PurchaseReceiptItem[]
 
-    @@index([purchaseOrderId])
-    @@index([status])
+  @@index([purchaseOrderId])
+  @@index([status])
 }
 
 model PurchaseReceiptItem {
-    id                  String  @id @default(uuid())
-    purchaseReceiptId   String
-    purchaseOrderItemId String
-    quantity            Int
-    unitCost            Decimal
-    note                String?
+  id                  String  @id @default(uuid())
+  purchaseReceiptId   String
+  purchaseOrderItemId String
+  quantity            Int
+  unitCost            Decimal @db.Decimal(15, 2)
+  note                String?
 
-    purchaseReceipt   PurchaseReceipt   @relation(fields: [purchaseReceiptId], references: [id], onDelete: Restrict)
-    purchaseOrderItem PurchaseOrderItem @relation(fields: [purchaseOrderItemId], references: [id], onDelete: Restrict)
+  purchaseReceipt     PurchaseReceipt      @relation(fields: [purchaseReceiptId], references: [id], onDelete: Restrict)
+  purchaseOrderItem   PurchaseOrderItem    @relation(fields: [purchaseOrderItemId], references: [id], onDelete: Restrict)
+  purchaseReturnItems PurchaseReturnItem[]
 
-    @@unique([purchaseReceiptId, purchaseOrderItemId])
+  @@unique([purchaseReceiptId, purchaseOrderItemId])
 }
 
 model PurchaseReturn {
-    id              String               @id @default(uuid())
-    code            String               @unique
-    purchaseOrderId String
-    warehouseId     String
-    supplierId      String
-    status          PurchaseReturnStatus @default(DRAFT)
-    returnedAt      DateTime?
-    returnedBy      String?
-    reason          String
-    note            String?
-    createdAt       DateTime             @default(now())
-    updatedAt       DateTime             @updatedAt
-    deletedAt       DateTime?
+  id              String @id @default(uuid())
+  code            String @unique
+  purchaseOrderId String
+  warehouseId     String
 
-    purchaseOrder       PurchaseOrder        @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
-    warehouse           Warehouse            @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    supplier            Supplier             @relation(fields: [supplierId], references: [id], onDelete: Restrict)
-    user                User?                @relation(fields: [returnedBy], references: [id], onDelete: Restrict)
-    purchaseReturnItems PurchaseReturnItem[]
+  status     PurchaseReturnStatus @default(DRAFT)
+  returnedAt DateTime?
+  returnedBy String?
+  approvedBy String?
+  approvedAt DateTime?
+  reason     String
+  note       String?
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+  deletedAt  DateTime?
 
-    @@index([purchaseOrderId])
-    @@index([warehouseId])
-    @@index([supplierId])
-    @@index([status])
+  purchaseOrder       PurchaseOrder        @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+  warehouse           Warehouse            @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  user                User?                @relation(fields: [returnedBy], references: [id], onDelete: Restrict)
+  approveUser         User?                @relation("UserApprove", fields: [approvedBy], references: [id], onDelete: Restrict)
+  purchaseReturnItems PurchaseReturnItem[]
+
+  @@index([purchaseOrderId])
+  @@index([warehouseId])
+  @@index([status])
 }
 
 model PurchaseReturnItem {
-    id               String    @id @default(uuid())
-    purchaseReturnId String
-    variantId        String
-    quantity         Int
-    unitCost         Decimal
-    note             String?
-    createdAt        DateTime  @default(now())
-    updatedAt        DateTime  @updatedAt
-    deletedAt        DateTime?
+  id                    String    @id @default(uuid())
+  purchaseReturnId      String
+  purchaseReceiptItemId String
+  quantity              Int
+  unitCost              Decimal   @db.Decimal(15, 2)
+  note                  String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  deletedAt             DateTime?
 
-    purchaseReturn PurchaseReturn @relation(fields: [purchaseReturnId], references: [id], onDelete: Restrict)
-    variant        ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  purchaseReturn      PurchaseReturn      @relation(fields: [purchaseReturnId], references: [id], onDelete: Restrict)
+  purchaseReceiptItem PurchaseReceiptItem @relation(fields: [purchaseReceiptItemId], references: [id], onDelete: Restrict)
 
-    @@unique([purchaseReturnId, variantId])
+  @@unique([purchaseReturnId, purchaseReceiptItemId])
 }
 
 model Customer {
-    id                 String              @id @default(uuid())
-    code               String              @unique
-    name               String
-    phone              String?
-    email              String?
-    address            String?
-    note               String?
-    status             CustomerStatus      @default(ACTIVE)
-    createdAt          DateTime            @default(now())
-    updatedAt          DateTime            @updatedAt
-    deletedAt          DateTime?
-    salesOrders        SalesOrder[]
-    salesReturns       SalesReturn[]
-    promotionCustomers PromotionCustomer[]
+  id                 String              @id @default(uuid())
+  code               String
+  name               String
+  phone              String?
+  email              String?
+  address            String?
+  note               String?
+  status             CustomerStatus      @default(ACTIVE)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime?
+  salesOrders        SalesOrder[]
+  salesReturns       SalesReturn[]
+  promotionCustomers PromotionCustomer[]
+  organizationId     String
 
-    @@index([status])
-    @@index([email])
-    @@index([phone])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Restrict)
+
+  @@unique([organizationId, code])
+  @@index([status])
+  @@index([email])
+  @@index([phone])
 }
 
 model SalesOrder {
-    id             String           @id @default(uuid())
-    code           String           @unique
-    customerId     String
-    warehouseId    String
-    status         SalesOrderStatus @default(DRAFT)
-    subTotal       Decimal          @default(0)
-    discountAmount Decimal          @default(0)
-    taxAmount      Decimal          @default(0)
-    totalAmount    Decimal          @default(0)
-    createdBy      String
-    note           String?
-    createdAt      DateTime         @default(now())
-    updatedAt      DateTime         @updatedAt
-    deletedAt      DateTime?
+  id             String           @id @default(uuid())
+  code           String           @unique
+  customerId     String
+  warehouseId    String
+  status         SalesOrderStatus @default(DRAFT)
+  subTotal       Decimal          @default(0)
+  discountAmount Decimal          @default(0)
+  taxAmount      Decimal          @default(0)
+  totalAmount    Decimal          @default(0)
+  createdBy      String
+  note           String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  deletedAt      DateTime?
 
-    customer            Customer             @relation(fields: [customerId], references: [id], onDelete: Restrict)
-    warehouse           Warehouse            @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    createdByEmployee   Employee             @relation(fields: [createdBy], references: [id], onDelete: Restrict)
-    salesOrderItems     SalesOrderItem[]
-    payments            Payment[]
-    salesReturns        SalesReturn[]
-    salesOrderShipments SalesOrderShipment[]
-    promotionUsages     PromotionUsage[]
+  customer            Customer             @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  warehouse           Warehouse            @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  createdByEmployee   Employee             @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  salesOrderItems     SalesOrderItem[]
+  payments            Payment[]
+  salesReturns        SalesReturn[]
+  salesOrderShipments SalesOrderShipment[]
+  promotionUsages     PromotionUsage[]
 
-    @@index([status])
-    @@index([customerId])
-    @@index([warehouseId])
-    @@index([createdBy])
+  @@index([status])
+  @@index([customerId])
+  @@index([warehouseId])
+  @@index([createdBy])
 }
 
 model SalesOrderItem {
-    id             String    @id @default(uuid())
-    salesOrderId   String
-    variantId      String
-    quantity       Int
-    unitPrice      Decimal
-    unitCost       Decimal
-    discountAmount Decimal
-    taxAmount      Decimal
-    totalAmount    Decimal
-    createdAt      DateTime  @default(now())
-    updatedAt      DateTime  @updatedAt
-    deletedAt      DateTime?
+  id             String    @id @default(uuid())
+  salesOrderId   String
+  variantId      String
+  quantity       Int
+  unitPrice      Decimal
+  unitCost       Decimal
+  discountAmount Decimal
+  taxAmount      Decimal
+  totalAmount    Decimal
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
 
-    salesOrder              SalesOrder               @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
-    variant                 ProductVariant           @relation(fields: [variantId], references: [id], onDelete: Restrict)
-    salesReturnItems        SalesReturnItem[]
-    salesOrderShipmentItems SalesOrderShipmentItem[]
+  salesOrder              SalesOrder               @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  variant                 ProductVariant           @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  salesReturnItems        SalesReturnItem[]
+  salesOrderShipmentItems SalesOrderShipmentItem[]
 
-    @@unique([salesOrderId, variantId])
+  @@unique([salesOrderId, variantId])
 }
 
 model Payment {
-    id            String        @id @default(uuid())
-    salesOrderId  String
-    amount        Decimal
-    method        PaymentMethod
-    status        PaymentStatus @default(PENDING)
-    paidAt        DateTime?
-    createdBy     String
-    referenceCode String?
-    note          String?
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
-    deletedAt     DateTime?
+  id            String        @id @default(uuid())
+  salesOrderId  String
+  amount        Decimal
+  method        PaymentMethod
+  status        PaymentStatus @default(PENDING)
+  paidAt        DateTime?
+  createdBy     String
+  referenceCode String?
+  note          String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
 
-    salesOrder        SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
-    createdByEmployee Employee   @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  salesOrder        SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  createdByEmployee Employee   @relation(fields: [createdBy], references: [id], onDelete: Restrict)
 
-    @@index([salesOrderId])
-    @@index([status])
-    @@index([referenceCode])
+  @@index([salesOrderId])
+  @@index([status])
+  @@index([referenceCode])
 }
 
 model SalesReturn {
-    id           String            @id @default(uuid())
-    code         String            @unique
-    salesOrderId String
-    warehouseId  String
-    customerId   String
-    status       SalesReturnStatus @default(DRAFT)
-    returnedAt   DateTime?
-    returnedBy   String?
-    reason       String
-    note         String?
+  id           String            @id @default(uuid())
+  code         String            @unique
+  salesOrderId String
+  warehouseId  String
+  customerId   String
+  status       SalesReturnStatus @default(DRAFT)
+  returnedAt   DateTime?
+  returnedBy   String?
+  reason       String
+  note         String?
 
-    customer           Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
-    salesOrder         SalesOrder        @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
-    warehouse          Warehouse         @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    returnedByEmployee Employee?         @relation(fields: [returnedBy], references: [id], onDelete: Restrict)
-    salesReturnItems   SalesReturnItem[]
-    refunds            Refund[]
+  customer           Customer          @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  salesOrder         SalesOrder        @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  warehouse          Warehouse         @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  returnedByEmployee Employee?         @relation(fields: [returnedBy], references: [id], onDelete: Restrict)
+  salesReturnItems   SalesReturnItem[]
+  refunds            Refund[]
 
-    @@index([salesOrderId])
-    @@index([warehouseId])
-    @@index([customerId])
-    @@index([status])
+  @@index([salesOrderId])
+  @@index([warehouseId])
+  @@index([customerId])
+  @@index([status])
 }
 
 model SalesReturnItem {
-    id               String    @id @default(uuid())
-    salesReturnId    String
-    salesOrderItemId String
-    quantity         Int
-    unitPrice        Decimal
-    unitCost         Decimal
-    note             String?
-    createdAt        DateTime  @default(now())
-    updatedAt        DateTime  @updatedAt
-    deletedAt        DateTime?
+  id               String    @id @default(uuid())
+  salesReturnId    String
+  salesOrderItemId String
+  quantity         Int
+  unitPrice        Decimal
+  unitCost         Decimal
+  note             String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
 
-    salesReturn    SalesReturn    @relation(fields: [salesReturnId], references: [id], onDelete: Restrict)
-    salesOrderItem SalesOrderItem @relation(fields: [salesOrderItemId], references: [id], onDelete: Restrict)
+  salesReturn    SalesReturn    @relation(fields: [salesReturnId], references: [id], onDelete: Restrict)
+  salesOrderItem SalesOrderItem @relation(fields: [salesOrderItemId], references: [id], onDelete: Restrict)
 
-    @@unique([salesReturnId, salesOrderItemId])
+  @@unique([salesReturnId, salesOrderItemId])
 }
 
 model Refund {
-    id            String        @id @default(uuid())
-    salesReturnId String
-    amount        Decimal
-    method        PaymentMethod
-    status        RefundStatus  @default(PENDING)
-    refundedAt    DateTime?
-    processedBy   String
-    referenceCode String?
-    note          String?
-    createdAt     DateTime      @default(now())
-    updatedAt     DateTime      @updatedAt
-    deletedAt     DateTime?
+  id            String        @id @default(uuid())
+  salesReturnId String
+  amount        Decimal
+  method        PaymentMethod
+  status        RefundStatus  @default(PENDING)
+  refundedAt    DateTime?
+  processedBy   String
+  referenceCode String?
+  note          String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
 
-    salesReturn         SalesReturn @relation(fields: [salesReturnId], references: [id], onDelete: Restrict)
-    processedByEmployee Employee    @relation(fields: [processedBy], references: [id], onDelete: Restrict)
+  salesReturn         SalesReturn @relation(fields: [salesReturnId], references: [id], onDelete: Restrict)
+  processedByEmployee Employee    @relation(fields: [processedBy], references: [id], onDelete: Restrict)
 
-    @@index([salesReturnId])
-    @@index([status])
-    @@index([referenceCode])
+  @@index([salesReturnId])
+  @@index([status])
+  @@index([referenceCode])
 }
 
 model StockAdjustment {
-    id          String                @id @default(uuid())
-    warehouseId String
-    status      StockAdjustmentStatus @default(DRAFT)
-    code        String                @unique
-    adjustedAt  DateTime?
-    adjustedBy  String?
-    reason      String
-    note        String?
-    createdAt   DateTime              @default(now())
-    updatedAt   DateTime              @updatedAt
-    deletedAt   DateTime?
+  id          String                @id @default(uuid())
+  warehouseId String
+  status      StockAdjustmentStatus @default(DRAFT)
+  code        String                @unique
+  adjustedAt  DateTime?
+  adjustedBy  String?
+  reason      String
+  note        String?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  deletedAt   DateTime?
 
-    warehouse            Warehouse             @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    adjustedByEmployee   Employee?             @relation(fields: [adjustedBy], references: [id], onDelete: Restrict)
-    stockAdjustmentItems StockAdjustmentItem[]
+  warehouse            Warehouse             @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  adjustedByEmployee   Employee?             @relation(fields: [adjustedBy], references: [id], onDelete: Restrict)
+  stockAdjustmentItems StockAdjustmentItem[]
 
-    @@index([status])
-    @@index([warehouseId])
+  @@index([status])
+  @@index([warehouseId])
 }
 
 model StockAdjustmentItem {
-    id                 String    @id @default(uuid())
-    stockAdjustmentId  String
-    variantId          String
-    systemQuantity     Int
-    actualQuantity     Int
-    adjustmentQuantity Int
-    note               String?
-    createdAt          DateTime  @default(now())
-    updatedAt          DateTime  @updatedAt
-    deletedAt          DateTime?
+  id                 String    @id @default(uuid())
+  stockAdjustmentId  String
+  variantId          String
+  systemQuantity     Int
+  actualQuantity     Int
+  adjustmentQuantity Int
+  note               String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
 
-    stockAdjustment StockAdjustment @relation(fields: [stockAdjustmentId], references: [id], onDelete: Restrict)
-    variant         ProductVariant  @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  stockAdjustment StockAdjustment @relation(fields: [stockAdjustmentId], references: [id], onDelete: Restrict)
+  variant         ProductVariant  @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
-    @@unique([stockAdjustmentId, variantId])
-    @@index([variantId])
+  @@unique([stockAdjustmentId, variantId])
+  @@index([variantId])
 }
 
 model SalesOrderShipment {
-    id               String         @id @default(uuid())
-    salesOrderId     String
-    warehouseId      String
-    method           ShipmentMethod
-    status           ShipmentStatus @default(PENDING)
-    recipientName    String
-    recipientPhone   String
-    recipientAddress String
-    shippedAt        DateTime?
-    deliveredAt      DateTime?
-    note             String?
-    createdAt        DateTime       @default(now())
-    updatedAt        DateTime       @updatedAt
-    deletedAt        DateTime?
+  id               String         @id @default(uuid())
+  salesOrderId     String
+  warehouseId      String
+  method           ShipmentMethod
+  status           ShipmentStatus @default(PENDING)
+  recipientName    String
+  recipientPhone   String
+  recipientAddress String
+  shippedAt        DateTime?
+  deliveredAt      DateTime?
+  note             String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  deletedAt        DateTime?
 
-    salesOrder              SalesOrder               @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
-    warehouse               Warehouse                @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
-    salesOrderShipmentItems SalesOrderShipmentItem[]
+  salesOrder              SalesOrder               @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  warehouse               Warehouse                @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  salesOrderShipmentItems SalesOrderShipmentItem[]
 
-    @@index([salesOrderId])
-    @@index([status])
-    @@index([warehouseId])
+  @@index([salesOrderId])
+  @@index([status])
+  @@index([warehouseId])
 }
 
 model SalesOrderShipmentItem {
-    id               String    @id @default(uuid())
-    shipmentId       String
-    salesOrderItemId String
-    quantity         Int
-    createdAt        DateTime  @default(now())
-    updatedAt        DateTime  @updatedAt
-    deletedAt        DateTime?
+  id               String    @id @default(uuid())
+  shipmentId       String
+  salesOrderItemId String
+  quantity         Int
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  deletedAt        DateTime?
 
-    shipment       SalesOrderShipment @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
-    salesOrderItem SalesOrderItem     @relation(fields: [salesOrderItemId], references: [id], onDelete: Restrict)
+  shipment       SalesOrderShipment @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+  salesOrderItem SalesOrderItem     @relation(fields: [salesOrderItemId], references: [id], onDelete: Restrict)
 
-    @@unique([shipmentId, salesOrderItemId])
-    @@index([salesOrderItemId])
+  @@unique([shipmentId, salesOrderItemId])
+  @@index([salesOrderItemId])
 }
 
 model Promotion {
-    id                  String               @id @default(uuid())
-    code                String               @unique
-    name                String
-    description         String?
-    type                PromotionType
-    value               Decimal
-    usageLimit          Int?
-    usageCount          Int                  @default(0)
-    startAt             DateTime
-    endAt               DateTime?
-    status              PromotionStatus      @default(DRAFT)
-    note                String?
-    createdAt           DateTime             @default(now())
-    updatedAt           DateTime             @updatedAt
-    deletedAt           DateTime?
-    promotionVariants   PromotionVariant[]
-    promotionUsages     PromotionUsage[]
-    promotionCustomers  PromotionCustomer[]
-    promotionConditions PromotionCondition[]
+  id                  String               @id @default(uuid())
+  code                String               @unique
+  name                String
+  description         String?
+  type                PromotionType
+  value               Decimal
+  usageLimit          Int?
+  usageCount          Int                  @default(0)
+  startAt             DateTime
+  endAt               DateTime?
+  status              PromotionStatus      @default(DRAFT)
+  note                String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime?
+  promotionVariants   PromotionVariant[]
+  promotionUsages     PromotionUsage[]
+  promotionCustomers  PromotionCustomer[]
+  promotionConditions PromotionCondition[]
 
-    @@index([status])
-    @@index([name])
-    @@index([startAt])
-    @@index([endAt])
+  @@index([status])
+  @@index([name])
+  @@index([startAt])
+  @@index([endAt])
 }
 
 model PromotionVariant {
-    id          String    @id @default(uuid())
-    promotionId String
-    variantId   String
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    deletedAt   DateTime?
+  id          String    @id @default(uuid())
+  promotionId String
+  variantId   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
-    promotion Promotion      @relation(fields: [promotionId], references: [id], onDelete: Restrict)
-    variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  promotion Promotion      @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
 
-    @@unique([promotionId, variantId])
-    @@index([variantId])
+  @@unique([promotionId, variantId])
+  @@index([variantId])
 }
 
 model PromotionUsage {
-    id             String   @id @default(uuid())
-    promotionId    String
-    salesOrderId   String
-    discountAmount Decimal
-    usedAt         DateTime @default(now())
+  id             String   @id @default(uuid())
+  promotionId    String
+  salesOrderId   String
+  discountAmount Decimal
+  usedAt         DateTime @default(now())
 
-    promotion  Promotion  @relation(fields: [promotionId], references: [id], onDelete: Restrict)
-    salesOrder SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
+  promotion  Promotion  @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+  salesOrder SalesOrder @relation(fields: [salesOrderId], references: [id], onDelete: Restrict)
 
-    @@unique([promotionId, salesOrderId])
-    @@index([usedAt])
-    @@index([salesOrderId])
+  @@unique([promotionId, salesOrderId])
+  @@index([usedAt])
+  @@index([salesOrderId])
 }
 
 model PromotionCustomer {
-    id          String    @id @default(uuid())
-    promotionId String
-    customerId  String
-    createdAt   DateTime  @default(now())
-    updatedAt   DateTime  @updatedAt
-    deletedAt   DateTime?
+  id          String    @id @default(uuid())
+  promotionId String
+  customerId  String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
-    promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Restrict)
-    customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+  customer  Customer  @relation(fields: [customerId], references: [id], onDelete: Restrict)
 
-    @@unique([promotionId, customerId])
-    @@index([customerId])
+  @@unique([promotionId, customerId])
+  @@index([customerId])
 }
 
 model PromotionCondition {
-    id          String                 @id @default(uuid())
-    promotionId String
-    type        PromotionConditionType
-    value       Decimal
-    createdAt   DateTime               @default(now())
-    updatedAt   DateTime               @updatedAt
-    deletedAt   DateTime?
+  id          String                 @id @default(uuid())
+  promotionId String
+  type        PromotionConditionType
+  value       Decimal
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  deletedAt   DateTime?
 
-    promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+  promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Restrict)
 
-    @@index([promotionId])
-    @@index([type])
+  @@index([promotionId])
+  @@index([type])
 }
 
 model PriceHistory {
-    id            String    @id @default(uuid())
-    variantId     String
-    costPrice     Decimal
-    sellingPrice  Decimal
-    effectiveFrom DateTime
-    effectiveTo   DateTime?
-    createdBy     String
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    deletedAt     DateTime?
+  id            String    @id @default(uuid())
+  variantId     String
+  costPrice     Decimal
+  sellingPrice  Decimal
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  createdBy     String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
 
-    variant           ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
-    createdByEmployee Employee       @relation(fields: [createdBy], references: [id], onDelete: Restrict)
+  variant           ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  createdByEmployee Employee       @relation(fields: [createdBy], references: [id], onDelete: Restrict)
 
-    @@index([variantId])
-    @@index([effectiveFrom])
-    @@index([effectiveTo])
+  @@index([variantId])
+  @@index([effectiveFrom])
+  @@index([effectiveTo])
 }
